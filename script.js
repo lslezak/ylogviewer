@@ -27,10 +27,25 @@ function append_line(parent, message) {
   parent.lastChild.appendChild(message_node);
 }
 
+function start_group(node, label) {
+  console.log("Group", label);
+
+  var summary = document.createElement("summary");
+  summary.classList.add("log-group-header");
+  summary.textContent = label;
+
+  var details = document.createElement("details");
+  details.appendChild(summary)
+
+  node.appendChild(details);
+
+  return details;
+}
+
 function parse_y2log(name, y2log) {
   document.getElementById("file-header").textContent = "Rendered File \"" + name + "\"";
 
-  const content = document.getElementById("content");
+  var parent_node = document.getElementById("content");
   y2log.split("\n").forEach(line => {
     var res = line.match(/^(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d <(\d)> \w+\(\d+\) \[(\S+)\] )(.*)/);
 
@@ -47,10 +62,24 @@ function parse_y2log(name, y2log) {
         message = res[2];
       }
 
-      add_line(content, prefix, level, component, message);
+      // log group opened
+      res = message.match(/^::group::(.*)/);
+      if (res) {
+        parent_node = start_group(parent_node, res[1]);
+      }
+
+      // log group closed
+      res = message.match(/^::endgroup::(.*)/);
+      if (res) {
+        add_line(parent_node, prefix, level, component, message);
+        parent_node = parent_node.parentElement;
+      }
+      else {
+        add_line(parent_node, prefix, level, component, message);
+      }
     }
     else {
-      append_line(content, line);
+      append_line(parent_node, line);
     }
   });
 }
