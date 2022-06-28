@@ -14,18 +14,64 @@
 
 <body>
   <div id="page">
-    <div id="filter">
-      <p>Filter</p>
-    </div>
+      <span id="configuration">
+        <button id="filter">Filter</button>
+      </span>
 
     <h1>YaST Log Viewer</h1>
 
-    <h2>Load y2log file</h2>
+    <section class="content">
+      Select the <code>y2log</code> file to display:
+      <input type="file" id="file" />
+    </section>
 
-    <input type="file" id="file" />
+    <h2 id="file-header"></h2>
 
     <div id="content">
-      <!-- page body -->
+      <!-- the y2log is loaded here -->
+    </div>
+
+    <div class="modal">
+      <input id="configuration_popup" type="checkbox" />
+      <label for="configuration_popup" class="overlay"></label>
+      <article>
+        <header>
+          <h3>Filter Settings</h3>
+          <label for="configuration_popup" class="close">&times;</label>
+        </header>
+        <section class="content">
+          <h4>Log Levels</h4>
+          <label>
+            <input type="checkbox" id="show-debug" data-level="0" checked>
+            <span class="checkable">(0) Debug</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-info" data-level="1" checked>
+            <span class="checkable">(1) Info</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-warning" data-level="2" checked>
+            <span class="checkable">(2) Warning</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-error" data-level="3" checked>
+            <span class="checkable">(3) Error</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-security" data-level="4" checked>
+            <span class="checkable">(4) Security</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-internal" data-level="5" checked>
+            <span class="checkable">(5) Internal</span>
+          </label>
+        </section>
+        <footer>
+          <label for="configuration_popup" class="button dangerous">
+            Close
+          </label>
+        </footer>
+      </article>
     </div>
 
   </div>

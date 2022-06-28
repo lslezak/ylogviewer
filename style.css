@@ -1,12 +1,22 @@
 #content {
   font-family: 'Courier New', Courier, monospace;
-  font-size: small;
+  font-size: 75%;
 }
 
-#filter {
-  position: fixed; right: 0; top: 0;
-  border-bottom-left-radius: 10px;
-  background-color: #efefef; padding: 20px;
+#configuration {
+  position: fixed;
+  right: 0;
+  top: 0;
+  margin: 20px 20px 0 0;
+}
+
+#file {
+  border: none;
+  width: auto;
+}
+
+.log-level-0 {
+  opacity: 0.3;
 }
 
 .log-level-2 {
@@ -15,6 +25,10 @@
 
 .log-level-3 {
   background-color: #ffb8b8
+}
+
+.log-level-4 {
+  background-color: #bdc1ff
 }
 
 .log-level-5 {

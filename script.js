@@ -20,16 +20,17 @@ function add_line(parent, prefix, level, component, message) {
 }
 
 function append_line(parent, message) {
-  console.log("Appending ",message);
+  console.log("Appending ", message);
   var message_node = document.createElement("div");
   message_node.textContent = message;
   message_node.classList.add("log-message");
   parent.lastChild.appendChild(message_node);
 }
 
-function parse_y2log(y2log) {
-  const content = document.getElementById("content");
+function parse_y2log(name, y2log) {
+  document.getElementById("file-header").textContent = "Rendered File \"" + name + "\"";
 
+  const content = document.getElementById("content");
   y2log.split("\n").forEach(line => {
     var res = line.match(/^(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d <(\d)> \w+\(\d+\) \[(\S+)\] )(.*)/);
 
@@ -42,7 +43,6 @@ function parse_y2log(y2log) {
       // some messages do not contain the file location
       res = message.match(/^([^ ]*:\d+ )(.*)/)
       if (res) {
-        console.log(res);
         prefix = prefix.concat(res[1]);
         message = res[2];
       }
@@ -67,14 +67,33 @@ function load_file(e) {
 
   // HTML5 FileReader
   var reader = new FileReader();
-  reader.onload = function (e) {
-    var contents = e.target.result;
-    parse_y2log(contents);
+  reader.onload = function (ev) {
+    var contents = ev.target.result;
+    parse_y2log(file.name, contents);
   };
 
   reader.readAsText(file);
 }
 
+function update_log_level(event) {
+  const new_style = event.srcElement.checked ? "" : "none";
+  document.querySelectorAll(".log-level-" + event.srcElement.dataset.level).forEach(node => {
+    node.style.display = new_style;
+  });
+}
+
 window.onload = function () {
   document.getElementById("file").addEventListener("change", load_file, false);
+
+  document.getElementById("filter").onclick = function() {
+    document.getElementById("configuration_popup").checked = true;
+  };
+
+  document.getElementById("show-debug").onclick = update_log_level;
+  document.getElementById("show-info").onclick = update_log_level;
+  document.getElementById("show-warning").onclick = update_log_level;
+  document.getElementById("show-error").onclick = update_log_level;
+  document.getElementById("show-security").onclick = update_log_level;
+  document.getElementById("show-internal").onclick = update_log_level;
+
 };
