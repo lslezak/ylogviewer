@@ -6,6 +6,7 @@
   <title>ylogviewer - an YaST Log Viewer</title>
   <link rel="icon" type="image/png" href="https://avatars3.githubusercontent.com/u/909990?s=60&amp;v=4" />
 
+  <!-- use Picnic CSS from https://picnicss.com/ -->
   <link rel="stylesheet" href="picnic.min.css">
   <link rel="stylesheet" href="style.css">
 
@@ -31,7 +32,8 @@
       <!-- the y2log is loaded here -->
     </div>
 
-    <div class="modal">
+    <!-- popup with filtering options -->
+    <div class="modal" id="config-modal">
       <input id="configuration_popup" type="checkbox" />
       <label for="configuration_popup" class="overlay"></label>
       <article>

@@ -84,15 +84,16 @@ function parse_y2log(name, y2log) {
   });
 }
 
-
+// load a local file selected by user
 function load_file(e) {
-  // clean the previous content
-  document.getElementById("content").textContent = "";
-
   var file = e.target.files[0];
   if (!file) {
     return;
   }
+
+  // clean the previous content
+  document.getElementById("content").textContent = "";
+  document.getElementById("file-header").textContent = "";
 
   // HTML5 FileReader
   var reader = new FileReader();
@@ -104,6 +105,7 @@ function load_file(e) {
   reader.readAsText(file);
 }
 
+// show/hide the selected log level messages
 function update_log_level(event) {
   const new_style = event.srcElement.checked ? "" : "none";
   document.querySelectorAll(".log-level-" + event.srcElement.dataset.level).forEach(node => {
@@ -114,15 +116,13 @@ function update_log_level(event) {
 window.onload = function () {
   document.getElementById("file").addEventListener("change", load_file, false);
 
+  // display filtering popup
   document.getElementById("filter").onclick = function() {
     document.getElementById("configuration_popup").checked = true;
   };
 
-  document.getElementById("show-debug").onclick = update_log_level;
-  document.getElementById("show-info").onclick = update_log_level;
-  document.getElementById("show-warning").onclick = update_log_level;
-  document.getElementById("show-error").onclick = update_log_level;
-  document.getElementById("show-security").onclick = update_log_level;
-  document.getElementById("show-internal").onclick = update_log_level;
-
+  // handle log level filters
+  document.querySelectorAll("#config-modal .content input[type=checkbox]").forEach(checkbox => {
+    checkbox.onclick = update_log_level;
+  });
 };
