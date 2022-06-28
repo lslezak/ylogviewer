@@ -1,0 +1,35 @@
+#content {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: small;
+}
+
+#filter {
+  position: fixed; right: 0; top: 0;
+  border-bottom-left-radius: 10px;
+  background-color: #efefef; padding: 20px;
+}
+
+.log-level-2 {
+  background-color: #fdd3a2
+}
+
+.log-level-3 {
+  background-color: #ffb8b8
+}
+
+.log-level-5 {
+  background-color: #ffadf8
+}
+
+.log-data {
+  opacity: 0.5;
+}
+
+.log-line {
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+body {
+  margin: 0 2em;
+}
