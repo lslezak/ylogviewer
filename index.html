@@ -38,10 +38,45 @@
       <label for="configuration_popup" class="overlay"></label>
       <article>
         <header>
-          <h3>Filter Settings</h3>
+          <h3>Display and Filter Settings</h3>
           <label for="configuration_popup" class="close">&times;</label>
         </header>
-        <section class="content">
+        <section class="content" id="filter-group-data">
+          <h4>Display Log Data</h4>
+          <label>
+            <input type="checkbox" id="show-date" data-selector=".log-date">
+            <span class="checkable">Date</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-time" data-selector=".log-time" checked>
+            <span class="checkable">Time</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-log-level" data-selector=".log-level-item">
+            <span class="checkable">Log Level</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-host" data-selector=".log-host">
+            <span class="checkable">Hostname</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-pid" data-selector=".log-pid">
+            <span class="checkable">Process ID</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-component" data-selector=".log-component" checked>
+            <span class="checkable">Component</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-location" data-selector=".log-location" checked>
+            <span class="checkable">Location</span>
+          </label>
+          <label>
+            <input type="checkbox" id="show-message" data-selector=".log-message" checked>
+            <span class="checkable">Message</span>
+          </label>
+        </section>
+        <section class="content" id="filter-group-level">
           <h4>Log Levels</h4>
           <label>
             <input type="checkbox" id="show-debug" data-level="0" checked>

@@ -32,8 +32,14 @@
   background-color: #ffadf8
 }
 
-.log-data {
+.log-date, .log-time, .log-level-item, .log-host, .log-pid,
+.log-component, .log-location {
   opacity: 0.5;
+}
+
+/* hide some data by default */
+.log-date, .log-level-item, .log-host, .log-pid {
+  display: none;
 }
 
 /* display extra spaces in the log messages, wrap long lines */

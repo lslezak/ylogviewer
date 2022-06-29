@@ -1,20 +1,52 @@
 
 "use strict";
 
-function add_line(parent, prefix, level, component, message) {
+function add_line(parent, entry) {
   var node = document.createElement("div");
-  node.classList.add("log-level-" + level)
+  node.classList.add("log-level-" + entry.level)
   node.classList.add("log-line")
 
-  var prefix_node = document.createElement("span");
-  prefix_node.textContent = prefix;
-  prefix_node.classList.add("log-data");
-  node.appendChild(prefix_node);
+  var span_node = document.createElement("span");
+  span_node.textContent = entry.date + " ";
+  span_node.classList.add("log-date");
+  node.appendChild(span_node);
 
-  var message_node = document.createElement("span");
-  message_node.textContent = message;
-  message_node.classList.add("log-message");
-  node.appendChild(message_node);
+  span_node = document.createElement("span");
+  span_node.textContent = entry.time + " ";
+  span_node.classList.add("log-time");
+  node.appendChild(span_node);
+
+  span_node = document.createElement("span");
+  span_node.textContent = "<" + entry.level + "> ";
+  span_node.classList.add("log-level-item");
+  node.appendChild(span_node);
+
+  span_node = document.createElement("span");
+  span_node.textContent = entry.host;
+  span_node.classList.add("log-host");
+  node.appendChild(span_node);
+
+  span_node = document.createElement("span");
+  span_node.textContent = "(" + entry.pid + ") ";
+  span_node.classList.add("log-pid");
+  node.appendChild(span_node);
+
+  span_node = document.createElement("span");
+  span_node.textContent = "[" + entry.component + "] ";
+  span_node.classList.add("log-component");
+  node.appendChild(span_node);
+
+  if (entry.location) {
+    span_node = document.createElement("span");
+    span_node.textContent = entry.location + " ";
+    span_node.classList.add("log-location");
+    node.appendChild(span_node);
+  }
+
+  span_node = document.createElement("span");
+  span_node.textContent = entry.message;
+  span_node.classList.add("log-message");
+  node.appendChild(span_node);
 
   parent.appendChild(node);
 }
@@ -47,35 +79,41 @@ function parse_y2log(name, y2log) {
 
   var parent_node = document.getElementById("content");
   y2log.split("\n").forEach(line => {
-    var res = line.match(/^(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d <(\d)> \w+\(\d+\) \[(\S+)\] )(.*)/);
+    var res = line.match(/^(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d) <(\d)> (\w+)\((\d+)\) \[(\S+)\] (.*)/);
 
     if (res) {
-      var prefix = res[1];
-      var level = res[2];
-      var component = res[3];
-      var message = res[4];
+      var entry = {
+        date: res[1],
+        time: res[2],
+        level: res[3],
+        host: res[4],
+        pid: res[5],
+        component: res[6],
+        message: res[7],
+        location: null
+      };
 
       // some messages do not contain the file location
-      res = message.match(/^([^ ]*:\d+ )(.*)/)
+      res = entry.message.match(/^([^ ]*:\d+) (.*)/)
       if (res) {
-        prefix = prefix.concat(res[1]);
-        message = res[2];
+        entry.location = res[1];
+        entry.message = res[2];
       }
 
       // log group opened
-      res = message.match(/^::group::(.*)/);
+      res = entry.message.match(/^::group::(.*)/);
       if (res) {
         parent_node = start_group(parent_node, res[1]);
       }
 
       // log group closed
-      res = message.match(/^::endgroup::(.*)/);
+      res = entry.message.match(/^::endgroup::(.*)/);
       if (res) {
-        add_line(parent_node, prefix, level, component, message);
+        add_line(parent_node, entry);
         parent_node = parent_node.parentElement;
       }
       else {
-        add_line(parent_node, prefix, level, component, message);
+        add_line(parent_node, entry);
       }
     }
     else {
@@ -113,6 +151,15 @@ function update_log_level(event) {
   });
 }
 
+// show/hide the selected data
+function update_display(event) {
+  console.log(event.srcElement.dataset.selector);
+  const new_style = event.srcElement.checked ? "initial" : "none";
+  document.querySelectorAll(event.srcElement.dataset.selector).forEach(node => {
+    node.style.display = new_style;
+  });
+}
+
 window.onload = function () {
   document.getElementById("file").addEventListener("change", load_file, false);
 
@@ -122,7 +169,12 @@ window.onload = function () {
   };
 
   // handle log level filters
-  document.querySelectorAll("#config-modal .content input[type=checkbox]").forEach(checkbox => {
+  document.querySelectorAll("#filter-group-level input[type=checkbox]").forEach(checkbox => {
     checkbox.onclick = update_log_level;
+  });
+
+  // handle display filters
+  document.querySelectorAll("#filter-group-data input[type=checkbox]").forEach(checkbox => {
+    checkbox.onclick = update_display;
   });
 };
