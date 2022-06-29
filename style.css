@@ -15,6 +15,10 @@
   width: auto;
 }
 
+#index {
+  margin-left: 2em;
+}
+
 /* log level colors */
 .log-level-0 {
   opacity: 0.5;
@@ -48,10 +52,21 @@
   white-space: pre-wrap;
 }
 
+.pid-header {
+  margin-top: 1em;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .log-group-header {
   font-weight: bold;
   font-family: sans-serif;
   font-size: 120%;
+}
+
+.index-entry {
+  margin-left: 2em;
+  font-size: 90%;
+  display: block;
 }
 
 #content summary {

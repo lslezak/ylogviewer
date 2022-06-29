@@ -92,12 +92,13 @@ function append_line(parent, message) {
   parent.lastChild.appendChild(message_node);
 }
 
-function start_group(node, label) {
+function start_group(node, label, id) {
   console.log("Group", label);
 
   var summary = document.createElement("summary");
   summary.classList.add("log-group-header");
   summary.textContent = label;
+  summary.id = "log-group-header-" + id;
 
   var details = document.createElement("details");
   details.appendChild(summary)
@@ -107,10 +108,43 @@ function start_group(node, label) {
   return details;
 }
 
+function add_pid_header(parent, pid) {
+  var node = document.createElement("h3");
+  node.textContent = "Process " + pid;
+  node.id = "pid-header-" + pid;
+  parent.appendChild(node);
+}
+
+function create_pid_index(pids) {
+  var index = document.getElementById("index");
+  pids.forEach((data, pid) => {
+    if (data.summary) {
+      var index_item = document.createElement("h4");
+      var link = document.createElement("a");
+      link.href = "#pid-header-" + pid;
+      link.textContent = "Process " + pid + " - " + data.summary;
+      index_item.appendChild(link);
+
+      index.appendChild(index_item);
+      index.appendChild(data.index);
+
+      var pid_header = document.getElementById("pid-header-" + pid)
+      pid_header.style.display = "";
+      pid_header.textContent = link.textContent;
+
+      document.getElementById("index-header").textContent = "Process Index";
+    }
+  });
+}
+
 function parse_y2log(name, y2log) {
   document.getElementById("file-header").textContent = "Rendered File \"" + name + "\"";
 
   var component_groups = new Set();
+  var pids = new Map();
+  var last_pid = null;
+  // unique group id
+  var group_id = 0;
 
   var parent_node = document.getElementById("content");
   y2log.split("\n").forEach(line => {
@@ -128,6 +162,27 @@ function parse_y2log(name, y2log) {
         location: null
       };
 
+      if (entry.pid != last_pid) {
+        if (!pids.has(entry.pid))
+        {
+          var pid_item = {
+            summary: null,
+            index: document.createElement("div")
+          };
+          pids.set(entry.pid, pid_item);
+          // add a PID header (invisible so far)
+          var h3_node = document.createElement("h3");
+          h3_node.classList.add("pid-header");
+          h3_node.id = "pid-header-" + entry.pid;
+          h3_node.style.display = "none";
+          document.getElementById("content").appendChild(h3_node);
+        }
+        // restart from the top level
+        parent_node = document.getElementById("content");
+        // add_pid_header(parent_node, entry.pid);
+        last_pid = entry.pid;
+      }
+
       // some messages do not contain the file location
       res = entry.message.match(/^([^ ]*:\d+) (.*)/)
       if (res) {
@@ -135,10 +190,34 @@ function parse_y2log(name, y2log) {
         entry.message = res[2];
       }
 
+      var pid_entry = pids.get(entry.pid);
+
+      res = entry.message.match(/y2base called with \["([^"]*)"/);
+      if (res) {
+        pid_entry.summary = "YaST client \"" + res[1] + "\"";
+      }
+
+      if (entry.location) {
+        res = entry.message.match(/Number of modified files: (\d+)/);
+        var res2 = entry.location.match(/\byupdate\b/);
+        if (res && res2) {
+          pid_entry.summary = "yupdate - updated " + res[1] + " files";
+        }
+      }
+
       // log group opened
       res = entry.message.match(/^::group::(.*)/);
       if (res) {
-        parent_node = start_group(parent_node, res[1]);
+        parent_node = start_group(parent_node, res[1], group_id);
+
+        var index_entry = document.createElement("a");
+        index_entry.classList.add("index-entry");
+        index_entry.textContent = res[1];
+        index_entry.href = "#log-group-header-" + group_id;
+        pid_entry.index.appendChild(index_entry);
+        pid_entry.index = index_entry;
+
+        group_id = group_id + 1;
       }
 
       entry.component_group = component_group(entry.component);
@@ -149,6 +228,9 @@ function parse_y2log(name, y2log) {
       if (res) {
         add_line(parent_node, entry);
         parent_node = parent_node.parentElement;
+        if (pid_entry.index.parentElement) {
+          pid_entry.index = pid_entry.index.parentElement;
+        }
       }
       else {
         add_line(parent_node, entry);
@@ -159,7 +241,8 @@ function parse_y2log(name, y2log) {
     }
   });
 
-  return component_groups;
+  create_pid_index(pids);
+  add_component_filters(component_groups);
 }
 
 // load a local file selected by user
@@ -170,16 +253,16 @@ function load_file(e) {
   }
 
   // clean the previous content
-  document.getElementById("content").textContent = "";
-  document.getElementById("file-header").textContent = "";
-  document.getElementById("filter-group-components-list").textContent = "";
+  ["content", "file-header", "filter-group-components-list", "index-header",
+    "index" ].forEach( id => {
+    document.getElementById(id).textContent = "";
+  });
 
   // HTML5 FileReader
   var reader = new FileReader();
   reader.onload = function (ev) {
     var contents = ev.target.result;
-    var groups = parse_y2log(file.name, contents);
-    add_component_filters(groups);
+    parse_y2log(file.name, contents);
   };
 
   reader.readAsText(file);
@@ -195,7 +278,6 @@ function update_log_level(event) {
 
 // show/hide the selected data
 function update_display(event) {
-  console.log(event.srcElement.dataset.selector);
   const new_style = event.srcElement.checked ? "initial" : "none";
   document.querySelectorAll(event.srcElement.dataset.selector).forEach(node => {
     node.style.display = new_style;
