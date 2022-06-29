@@ -66,6 +66,12 @@ details > .log-line, details > details {
   padding-left: 1em;
 }
 
+/* checkboxes in the filter popup */
+.modal section label {
+  margin-right: 1em;
+  white-space: nowrap;
+}
+
 body {
   margin: 0 2em;
 }
