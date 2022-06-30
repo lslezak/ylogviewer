@@ -210,10 +210,12 @@ function parse_y2log(name, y2log) {
       if (res) {
         parent_node = start_group(parent_node, res[1], group_id);
 
-        var index_entry = document.createElement("a");
+        var index_entry = document.createElement("div");
         index_entry.classList.add("index-entry");
-        index_entry.textContent = res[1];
-        index_entry.href = "#log-group-header-" + group_id;
+        var index_link = document.createElement("a");
+        index_link.textContent = res[1];
+        index_link.href = "#log-group-header-" + group_id;
+        index_entry.appendChild(index_link);
         pid_entry.index.appendChild(index_entry);
         pid_entry.index = index_entry;
 
@@ -227,6 +229,26 @@ function parse_y2log(name, y2log) {
       res = entry.message.match(/^::endgroup::(.*)/);
       if (res) {
         add_line(parent_node, entry);
+
+        // append the result
+        if (res[1].length > 0) {
+          // append to the group opening
+          var result_node = document.createElement("span");
+          result_node.textContent = " (" + res[1] + ")";
+          parent_node.firstChild.appendChild(result_node);
+
+          // append to the index
+          result_node = document.createElement("span");
+          result_node.textContent = " (" + res[1] + ")";
+          pid_entry.index.appendChild(result_node);
+        }
+
+        // indicate error result
+        if (entry.level == "3") {
+          pid_entry.index.classList.add("log-level-3");
+          parent_node.firstChild.classList.add("log-level-3");
+        }
+
         parent_node = parent_node.parentElement;
         if (pid_entry.index.parentElement) {
           pid_entry.index = pid_entry.index.parentElement;
@@ -271,7 +293,7 @@ function load_file(e) {
 // show/hide the selected log level messages
 function update_log_level(event) {
   const new_style = event.srcElement.checked ? "" : "none";
-  document.querySelectorAll(".log-level-" + event.srcElement.dataset.level).forEach(node => {
+  document.querySelectorAll("#content .log-level-" + event.srcElement.dataset.level).forEach(node => {
     node.style.display = new_style;
   });
 }
