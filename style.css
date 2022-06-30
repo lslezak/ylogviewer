@@ -23,17 +23,35 @@
 .log-level-0 {
   opacity: 0.5;
 }
+.log-level-0:hover {
+  background-color: #eeeeee;
+}
+.log-level-1:hover {
+  background-color: #eeeeee;
+}
 .log-level-2 {
-  background-color: #fdd3a2
+  background-color: #fdd3a2;
+}
+.log-level-2:hover {
+  background-color: #fcc789;
 }
 .log-level-3 {
-  background-color: #ffb8b8
+  background-color: #ffb8b8;
+}
+.log-level-3:hover {
+  background-color: #ff9f9f;
 }
 .log-level-4 {
-  background-color: #bdc1ff
+  background-color: #bdc1ff;
+}
+.log-level-4:hover {
+  background-color: #a4a9ff;
 }
 .log-level-5 {
-  background-color: #ffadf8
+  background-color: #ffadf8;
+}
+.log-level-5:hover {
+  background-color: #ff94f6;
 }
 
 .log-date, .log-time, .log-level-item, .log-host, .log-pid,
