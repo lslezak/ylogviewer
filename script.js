@@ -147,7 +147,9 @@ function parse_y2log(name, y2log) {
   var group_id = 0;
 
   var parent_node = document.getElementById("content");
+  var line_index = 0;
   y2log.split("\n").forEach(line => {
+    line_index = line_index + 1;
     var res = line.match(/^(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d) <(\d)> (\w+)\((\d+)\) \[(\S+)\] (.*)/);
 
     if (res) {
@@ -163,8 +165,7 @@ function parse_y2log(name, y2log) {
       };
 
       if (entry.pid != last_pid) {
-        if (!pids.has(entry.pid))
-        {
+        if (!pids.has(entry.pid)) {
           var pid_item = {
             summary: null,
             index: document.createElement("div")
@@ -263,6 +264,8 @@ function parse_y2log(name, y2log) {
     }
   });
 
+  console.log("Loaded " + line_index + " lines");
+
   create_pid_index(pids);
   add_component_filters(component_groups);
 }
@@ -276,22 +279,38 @@ function load_file(e) {
 
   // clean the previous content
   ["content", "file-header", "filter-group-components-list", "index-header",
-    "index" ].forEach( id => {
-    document.getElementById(id).textContent = "";
-  });
+    "index"].forEach(id => document.getElementById(id).textContent = "");
 
   // HTML5 FileReader
   var reader = new FileReader();
   reader.onload = function (ev) {
     var content = ev.target.result;
 
-    if (file.name.match(/\.gz$/)) {
-      console.time("Uncompressing");
-      content = pako.inflate(content, { to: "string" });
-      console.timeEnd("Uncompressing");
-    }
+    if (file.name.match(/\.tar\.gz$/i) || file.name.match(/\.tgz$/i)) {
+      console.time("Uncompressing " + file.name);
+      var f = pako.ungzip(content);
+      console.timeEnd("Uncompressing " + file.name);
 
-    parse_y2log(file.name, content);
+      console.time("Untarring " + file.name);
+      untar(new Uint8Array(f).buffer).then((files) => {
+        console.timeEnd("Untarring " + file.name);
+        var y2log = files.find(f => f.name == "YaST2/y2log");
+        if (y2log) {
+          var decoder = new TextDecoder("utf-8");
+          var log = decoder.decode(y2log.buffer);
+          parse_y2log(file.name + ":/YaST2/y2log", log);
+        }
+      });
+    }
+    else if (file.name.match(/\.gz$/)) {
+      console.time("Uncompressing");
+      content = pako.ungzip(content, { to: "string" });
+      console.timeEnd("Uncompressing");
+      parse_y2log(file.name, content);
+    }
+    else {
+      parse_y2log(file.name, content);
+    }
   };
 
   if (file.name.match(/\.gz$/)) {
