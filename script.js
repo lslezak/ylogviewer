@@ -283,11 +283,23 @@ function load_file(e) {
   // HTML5 FileReader
   var reader = new FileReader();
   reader.onload = function (ev) {
-    var contents = ev.target.result;
-    parse_y2log(file.name, contents);
+    var content = ev.target.result;
+
+    if (file.name.match(/\.gz$/)) {
+      console.time("Uncompressing");
+      content = pako.inflate(content, { to: "string" });
+      console.timeEnd("Uncompressing");
+    }
+
+    parse_y2log(file.name, content);
   };
 
-  reader.readAsText(file);
+  if (file.name.match(/\.gz$/)) {
+    reader.readAsArrayBuffer(file);
+  }
+  else {
+    reader.readAsText(file);
+  }
 }
 
 // show/hide the selected log level messages
