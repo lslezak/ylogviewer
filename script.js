@@ -384,4 +384,20 @@ window.onload = function () {
   document.querySelectorAll("#filter-group-data input[type=checkbox]").forEach(checkbox => {
     checkbox.onclick = update_display;
   });
+
+  document.getElementById("content").onmouseover = function (event) {
+    var location = "";
+    event.path.forEach(p => {
+      if (p.tagName == "DETAILS") {
+        if (location.length != 0) {
+          location = " > " + location;
+        }
+        location = p.firstChild.childNodes[0].nodeValue + location;
+      }
+    });
+
+    var node = document.getElementById("navigation");
+    node.textContent = location;
+    node.style.display = (location.length == 0) ? "none" : "";
+  };
 };

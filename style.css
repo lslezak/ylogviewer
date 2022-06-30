@@ -10,9 +10,20 @@
   margin: 20px 20px 0 0;
 }
 
+#navigation {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 75%;
+  background-color: #cbcbcb;
+  padding: 3px 0.5em;
+}
+
 #file {
   border: none;
   width: auto;
+  background-color: #cbcbcb;
 }
 
 #index {
