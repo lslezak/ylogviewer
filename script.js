@@ -271,6 +271,15 @@ function parse_y2log(name, y2log) {
   console.timeEnd("Parsing " + name);
 }
 
+function show_loader() {
+  document.getElementById("loader").style.display = "block";
+}
+
+function hide_loader() {
+  document.getElementById("loader").style.display = "none";
+}
+
+
 // load a local file selected by user
 function load_file(e) {
   var file = e.target.files[0];
@@ -281,6 +290,8 @@ function load_file(e) {
   // clean the previous content
   ["content", "file-header", "filter-group-components-list", "index",
     "processes-header"].forEach(id => document.getElementById(id).textContent = "");
+
+  show_loader();
 
   // HTML5 FileReader
   var reader = new FileReader();
@@ -312,6 +323,8 @@ function load_file(e) {
     else {
       parse_y2log(file.name, content);
     }
+
+    hide_loader();
   };
 
   if (file.name.match(/\.gz$/)) {

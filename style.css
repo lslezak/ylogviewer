@@ -138,3 +138,20 @@ details > .log-line, details > details {
 body {
   margin: 0 2em;
 }
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #7a7a7a;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  margin-left: 50%;
+  margin-top: 5em;
+  animation: spin 1s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
