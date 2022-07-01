@@ -92,13 +92,8 @@
   font-size: 120%;
 }
 
-/* group result */
-.log-group-header span {
-  font-size: 90%;
-  font-weight: normal;
-}
-
 .group-result {
+  font-weight: normal;
   font-size: 90%;
   background-color: #eeeeee;
   margin-left: 1em;
@@ -106,6 +101,15 @@
   border-radius: 3px;
   color: #444;
 }
+
+.group-elapsed-time {
+  font-weight: normal;
+  font-size: 75%;
+  background-color: #d5efff;
+  margin-left: 1em;
+  padding: 3px 6px;
+  border-radius: 10px;
+  color: #444;}
 
 .index-entry {
   margin-left: 2em;

@@ -92,7 +92,7 @@ function append_line(parent, message) {
   parent.lastChild.appendChild(message_node);
 }
 
-function start_group(node, label, id) {
+function start_group(node, timestamp, label, id) {
   console.log("Group", label);
 
   var summary = document.createElement("summary");
@@ -101,6 +101,7 @@ function start_group(node, label, id) {
   summary.id = "log-group-header-" + id;
 
   var details = document.createElement("details");
+  details.dataset.timestamp = timestamp;
   details.appendChild(summary)
 
   node.appendChild(details);
@@ -133,6 +134,29 @@ function create_pid_index(pids) {
       pid_header.textContent = link.textContent;
     }
   });
+}
+
+function format_elapsed_time(start_time, end_time) {
+  var elapsed = parseFloat(end_time) - parseFloat(start_time);
+
+  if (elapsed > 60) {
+    // use seconds
+    var mins = Math.floor(elapsed / 60);
+    var secs = elapsed - (60 * mins);
+    return mins + "min " + secs.toFixed(2) + "s";
+  }
+  else if (elapsed > 1) {
+    // use seconds
+    return elapsed.toFixed(2) + "s";
+  }
+  else if (elapsed < 0.001) {
+    // use microseconds
+    return (1000000 * elapsed).toFixed(2) + "µs";
+  }
+  else {
+    // use miliseconds
+    return (1000 * elapsed).toFixed(2) + "ms";
+  }
 }
 
 function parse_y2log(name, y2log) {
@@ -204,7 +228,7 @@ function parse_y2log(name, y2log) {
       // log group opened
       res = entry.message.match(/^::group::(\d+\.\d+)::(.*)/);
       if (res) {
-        parent_node = start_group(parent_node, res[2], group_id);
+        parent_node = start_group(parent_node, res[1], res[2], group_id);
 
         var index_entry = document.createElement("div");
         index_entry.classList.add("index-entry");
@@ -240,6 +264,13 @@ function parse_y2log(name, y2log) {
           result_node.textContent = res[2];
           pid_entry.index.appendChild(result_node);
         }
+
+        var elapsed = format_elapsed_time(parent_node.dataset.timestamp, res[1]);
+        // append to the group
+        var elapsed_node = document.createElement("span");
+        elapsed_node.classList.add("group-elapsed-time");
+        elapsed_node.textContent = elapsed;
+        parent_node.firstChild.appendChild(elapsed_node);
 
         // indicate error result
         if (entry.level == "3") {
@@ -399,7 +430,8 @@ window.onload = function () {
     checkbox.onclick = update_display;
   });
 
-  document.getElementById("content").onmouseover = function (event) {
+  var content = document.getElementById("content");
+  content.onmouseover = function (event) {
     var location = "";
     event.path.forEach(p => {
       if (p.tagName == "DETAILS") {
@@ -413,5 +445,9 @@ window.onload = function () {
     var node = document.getElementById("navigation");
     node.textContent = location;
     node.style.display = (location.length == 0) ? "none" : "";
+  };
+  // hide the location when leaving the log area
+  content.onmouseleave = (event) => {
+    document.getElementById("navigation").style.display = "none";
   };
 };
