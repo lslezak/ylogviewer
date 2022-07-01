@@ -98,6 +98,15 @@
   font-weight: normal;
 }
 
+.group-result {
+  font-size: 90%;
+  background-color: #eeeeee;
+  margin-left: 1em;
+  padding: 2px;
+  border-radius: 3px;
+  color: #444;
+}
+
 .index-entry {
   margin-left: 2em;
   font-size: 90%;
@@ -106,6 +115,11 @@
 #content summary {
   /* to display the triangle icon properly */
   display: list-item;
+}
+
+#processes-header {
+  margin-top: 2em;
+  padding-bottom: 0;
 }
 
 /* indent nested groups */

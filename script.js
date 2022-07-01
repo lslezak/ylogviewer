@@ -131,22 +131,20 @@ function create_pid_index(pids) {
       var pid_header = document.getElementById("pid-header-" + pid)
       pid_header.style.display = "";
       pid_header.textContent = link.textContent;
-
-      document.getElementById("index-header").textContent = "Process Index";
     }
   });
 }
 
 function parse_y2log(name, y2log) {
-  document.getElementById("file-header").textContent = "Rendered File \"" + name + "\"";
+  console.time("Parsing " + name);
 
   var component_groups = new Set();
   var pids = new Map();
   var last_pid = null;
   // unique group id
   var group_id = 0;
-
   var parent_node = document.getElementById("content");
+
   var line_index = 0;
   y2log.split("\n").forEach(line => {
     line_index = line_index + 1;
@@ -172,15 +170,12 @@ function parse_y2log(name, y2log) {
           };
           pids.set(entry.pid, pid_item);
           // add a PID header (invisible so far)
-          var h3_node = document.createElement("h3");
-          h3_node.classList.add("pid-header");
-          h3_node.id = "pid-header-" + entry.pid;
-          h3_node.style.display = "none";
-          document.getElementById("content").appendChild(h3_node);
+          var h2_node = document.createElement("h2");
+          h2_node.classList.add("pid-header");
+          h2_node.id = "pid-header-" + entry.pid;
+          h2_node.style.display = "none";
+          document.getElementById("content").appendChild(h2_node);
         }
-        // restart from the top level
-        parent_node = document.getElementById("content");
-        // add_pid_header(parent_node, entry.pid);
         last_pid = entry.pid;
       }
 
@@ -207,14 +202,14 @@ function parse_y2log(name, y2log) {
       }
 
       // log group opened
-      res = entry.message.match(/^::group::(.*)/);
+      res = entry.message.match(/^::group::(\d+\.\d+)::(.*)/);
       if (res) {
-        parent_node = start_group(parent_node, res[1], group_id);
+        parent_node = start_group(parent_node, res[2], group_id);
 
         var index_entry = document.createElement("div");
         index_entry.classList.add("index-entry");
         var index_link = document.createElement("a");
-        index_link.textContent = res[1];
+        index_link.textContent = res[2];
         index_link.href = "#log-group-header-" + group_id;
         index_entry.appendChild(index_link);
         pid_entry.index.appendChild(index_entry);
@@ -227,20 +222,22 @@ function parse_y2log(name, y2log) {
       component_groups.add(entry.component_group);
 
       // log group closed
-      res = entry.message.match(/^::endgroup::(.*)/);
+      res = entry.message.match(/^::endgroup::(\d+\.\d+)::(.*)/);
       if (res) {
         add_line(parent_node, entry);
 
         // append the result
-        if (res[1].length > 0) {
+        if (res[2].length > 0) {
           // append to the group opening
           var result_node = document.createElement("span");
-          result_node.textContent = " (" + res[1] + ")";
+          result_node.classList.add("group-result");
+          result_node.textContent = res[2];
           parent_node.firstChild.appendChild(result_node);
 
           // append to the index
           result_node = document.createElement("span");
-          result_node.textContent = " (" + res[1] + ")";
+          result_node.classList.add("group-result");
+          result_node.textContent = res[2];
           pid_entry.index.appendChild(result_node);
         }
 
@@ -268,6 +265,10 @@ function parse_y2log(name, y2log) {
 
   create_pid_index(pids);
   add_component_filters(component_groups);
+  document.getElementById("file-header").textContent = "Content of file \"" + name + "\"";
+  document.getElementById("processes-header").textContent = "Loaded Logs";
+
+  console.timeEnd("Parsing " + name);
 }
 
 // load a local file selected by user
@@ -278,8 +279,8 @@ function load_file(e) {
   }
 
   // clean the previous content
-  ["content", "file-header", "filter-group-components-list", "index-header",
-    "index"].forEach(id => document.getElementById(id).textContent = "");
+  ["content", "file-header", "filter-group-components-list", "index",
+    "processes-header"].forEach(id => document.getElementById(id).textContent = "");
 
   // HTML5 FileReader
   var reader = new FileReader();
