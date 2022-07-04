@@ -5,8 +5,9 @@
 // e.g. for "ui-macro" and "qt-ui" use the same "UI" filtering component
 function component_group(name) {
   if (name == "zconfig" || name == "parser::yum" || name == "Progress++"
-    || name == "parser++" || name == "parser" || name == "FileChecker" || name == "locks"
-    || name == "MODALIAS++" || name.match(/^zypp/) || name.match(/^librpm/)) {
+    || name == "parser++" || name == "parser" || name == "FileChecker"
+    || name == "locks" || name == "locks++" || name == "MODALIAS++"
+    || name.match(/^zypp/) || name.match(/^librpm/)) {
 
     return "libzypp";
   }
