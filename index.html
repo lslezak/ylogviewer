@@ -42,8 +42,13 @@
         <ul>
           <li>Plain text format (from <code>/var/log/YaST2/y2log</code> )</li>
           <li>Gzip compressed file (<code>*.gz</code>, like <code>y2log-1.gz</code> )</li>
+          <li>XZ compressed file (<code>*.xz</code>, like <code>y2log-1.xz</code>,
+            currently not created by YaST, you have to compress the file manually)</li>
           <li>Tarball (<code>*.tar.gz</code> or <code>*.tar.xz</code>,
-            currently only the <code>YaST2/y2log</code> file is displayed)</li>
+            created by the <code><a href=
+            "https://github.com/yast/yast-yast2/blob/master/scripts/save_y2logs">
+            save_y2logs</a></code> script, currently only the
+            <code>YaST2/y2log</code> file is displayed)</li>
         </ul>
       </p>
       <h4>Local Processing</h4>

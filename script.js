@@ -86,7 +86,7 @@ function add_line(parent, entry) {
 }
 
 function append_line(parent, message) {
-  console.log("Appending ", message);
+  // console.debug("Appending ", message);
   var message_node = document.createElement("div");
   message_node.textContent = message;
   message_node.classList.add("log-message");
@@ -301,6 +301,7 @@ function parse_y2log(name, y2log) {
   document.getElementById("processes-header").textContent = "Loaded Logs";
 
   console.timeEnd("Parsing " + name);
+  hide_loader();
 }
 
 function show_loader() {
@@ -331,7 +332,7 @@ function load_file(e) {
   reader.onload = function (ev) {
     var content = ev.target.result;
 
-    if (file.name.match(/\.tar\.xz$/i)) {
+    if (file.name.match(/\.xz$/i)) {
       var stream = new ReadableStream({
         start: (controller) => {
           controller.enqueue(new Uint8Array(content));
@@ -346,16 +347,26 @@ function load_file(e) {
       console.time("Uncompressing " + file.name);
       decompressedResponse.arrayBuffer().then(done => {
         console.timeEnd("Uncompressing " + file.name);
-        console.time("Untarring " + file.name);
-        untar(new Uint8Array(done).buffer).then((files) => {
-          console.timeEnd("Untarring " + file.name);
-          var y2log = files.find(f => f.name == "YaST2/y2log");
-          if (y2log) {
-            var decoder = new TextDecoder("utf-8");
-            var log = decoder.decode(y2log.buffer);
-            parse_y2log(file.name + ":/YaST2/y2log", log);
-          }
-        });
+        var array_buffer = new Uint8Array(done).buffer;
+        // tarball
+        if (file.name.match(/\.tar\.xz$/i)) {
+          console.time("Untarring " + file.name);
+          untar(array_buffer).then((files) => {
+            console.timeEnd("Untarring " + file.name);
+            var y2log = files.find(f => f.name == "YaST2/y2log");
+            if (y2log) {
+              var decoder = new TextDecoder("utf-8");
+              var log = decoder.decode(y2log.buffer);
+              parse_y2log(file.name + ":/YaST2/y2log", log);
+            }
+          });
+        }
+        // just a plain .xz file
+        else {
+          var decoder = new TextDecoder("utf-8");
+          var log = decoder.decode(array_buffer);
+          parse_y2log(file.name, log);
+        }
       });
     }
     else if (file.name.match(/\.tar\.gz$/i) || file.name.match(/\.tgz$/i)) {
@@ -383,11 +394,9 @@ function load_file(e) {
     else {
       parse_y2log(file.name, content);
     }
-
-    hide_loader();
   };
 
-  if (file.name.match(/\.gz$/) || file.name.match(/\.tgz$/) || file.name.match(/\.xz$/)) {
+  if (file.name.match(/\.gz$/i) || file.name.match(/\.tgz$/i) || file.name.match(/\.xz$/i)) {
     reader.readAsArrayBuffer(file);
   }
   else {
