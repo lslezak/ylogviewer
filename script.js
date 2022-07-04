@@ -128,6 +128,11 @@ function create_pid_index(pids) {
       index_item.appendChild(link);
 
       index.appendChild(index_item);
+
+      // ensure the index is displayed from the top item
+      while (data.index.parentElement) {
+        data.index = data.index.parentElement;
+      }
       index.appendChild(data.index);
 
       var pid_header = document.getElementById("pid-header-" + pid)
