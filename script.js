@@ -308,6 +308,7 @@ function show_loader() {
 
 function hide_loader() {
   document.getElementById("loader").style.display = "none";
+  document.getElementById("notes-info").style.display = "none";
 }
 
 

@@ -143,6 +143,24 @@ body {
   margin: 0 2em;
 }
 
+.notes {
+  font-size: 75%;
+  background-color: #e1e3ff;
+  border: 1px solid #a4a9ff;
+  border-radius: 5px;
+  padding: 2px 8px;
+  width: 50%;
+  min-width: 30em;
+}
+
+.notes-icon {
+  font-size: 150%;
+}
+
+.notes p,li {
+  margin: 0;
+}
+
 .loader {
   border: 8px solid #f3f3f3;
   border-top: 8px solid #7a7a7a;
