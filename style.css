@@ -147,8 +147,8 @@ body {
   font-size: 75%;
   background-color: #e1e3ff;
   border: 1px solid #a4a9ff;
-  border-radius: 5px;
-  padding: 2px 8px;
+  border-radius: 8px;
+  padding: 0 1em;
   width: 50%;
   min-width: 30em;
 }
