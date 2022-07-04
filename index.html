@@ -35,6 +35,17 @@
     <!-- FIXME: Use a grid for this? -->
     <div id="notes-info" class="notes">
       <h3><span class="notes-icon">&#9432; </span>Notes:</h3>
+
+      <h4>Supported Files</h4>
+      <p>You can load the log file in several formats:
+        <ul>
+          <li>Plain text format (from <code>/var/log/YaST2/y2log</code> )</li>
+          <li>Gzip compressed file (<code>*.gz</code>, like <code>y2log-1.gz</code> )</li>
+          <li>Tarball (<code>*.tar.gz</code> only, <code>*.tar.xz</code> is NOT supported yet,
+            currently only the <code>YaST2/y2log</code> file is displayed)</li>
+        </ul>
+      </p>
+      <h4>Local Processing</h4>
       <p>
         The selected file is NOT uploaded anywhere, the ylogviewer uses
         HTML5 features and processes the file completely locally!
