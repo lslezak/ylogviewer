@@ -331,7 +331,34 @@ function load_file(e) {
   reader.onload = function (ev) {
     var content = ev.target.result;
 
-    if (file.name.match(/\.tar\.gz$/i) || file.name.match(/\.tgz$/i)) {
+    if (file.name.match(/\.tar\.xz$/i)) {
+      var stream = new ReadableStream({
+        start: (controller) => {
+          controller.enqueue(new Uint8Array(content));
+          controller.close();
+        }
+      });
+
+      const decompressedResponse = new Response(
+        new xzwasm.XzReadableStream(stream)
+      );
+
+      console.time("Uncompressing " + file.name);
+      decompressedResponse.arrayBuffer().then(done => {
+        console.timeEnd("Uncompressing " + file.name);
+        console.time("Untarring " + file.name);
+        untar(new Uint8Array(done).buffer).then((files) => {
+          console.timeEnd("Untarring " + file.name);
+          var y2log = files.find(f => f.name == "YaST2/y2log");
+          if (y2log) {
+            var decoder = new TextDecoder("utf-8");
+            var log = decoder.decode(y2log.buffer);
+            parse_y2log(file.name + ":/YaST2/y2log", log);
+          }
+        });
+      });
+    }
+    else if (file.name.match(/\.tar\.gz$/i) || file.name.match(/\.tgz$/i)) {
       console.time("Uncompressing " + file.name);
       var f = pako.ungzip(content);
       console.timeEnd("Uncompressing " + file.name);
@@ -360,7 +387,7 @@ function load_file(e) {
     hide_loader();
   };
 
-  if (file.name.match(/\.gz$/)) {
+  if (file.name.match(/\.gz$/) || file.name.match(/\.tgz$/) || file.name.match(/\.xz$/)) {
     reader.readAsArrayBuffer(file);
   }
   else {
