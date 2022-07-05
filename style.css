@@ -18,12 +18,15 @@
   font-size: 75%;
   background-color: #cbcbcb;
   padding: 3px 0.5em;
+  display: none;
+}
+
+#filter {
+  display: none;
 }
 
 #file {
   border: none;
-  width: auto;
-  background-color: #cbcbcb;
 }
 
 #index {
@@ -143,18 +146,12 @@ body {
   margin: 0 2em;
 }
 
-.notes {
-  font-size: 75%;
-  background-color: #e1e3ff;
-  border: 1px solid #a4a9ff;
-  border-radius: 8px;
-  padding: 0 1em;
-  width: 50%;
-  min-width: 30em;
-}
-
 .notes-icon {
   font-size: 150%;
+}
+
+.card {
+  margin-bottom: 2em;
 }
 
 .notes p,li {

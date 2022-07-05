@@ -18,58 +18,63 @@
 
 <body>
   <div id="page">
-    <span id="configuration">
-      <button id="filter">Filter</button>
-    </span>
-
-    <span id="navigation"></span>
-
     <h1>YaST Log Viewer</h1>
 
-    <section class="content">
-      Select the <code>y2log</code> file to display:
-      <input type="file" id="file" />
-    </section>
+    <article class="card">
+      <header>
+        <h3>Select the <code>y2log</code> file to display</h3>
+      </header>
 
-    <br/>
+      <section class="content">
+        <input type="file" id="file" />
+      </section>
+    </article>
 
-    <!-- FIXME: Use a grid for this? -->
-    <div id="notes-info" class="notes">
-      <h3><span class="notes-icon">&#8505;&#65039; </span>Notes</h3>
+    <article class="card" id="notes-info">
+      <header>
+        <h3><span class="notes-icon">&#8505;&#65039; </span>Notes</h3>
+      </header>
 
-      <h4>Experimental Project</h4>
-      <p>
-        <span class="notes-icon">&#9888;&#65039; </span>
-        This is still a proof of concept project for experiments. That just means
-        there might be bugs...
-      </p>
-      <h4>Supported Files</h4>
-      <p>You can load the log file in several formats:
-        <ul>
-          <li>Plain text format (from <code>/var/log/YaST2/y2log</code> )</li>
-          <li>Gzip compressed file (<code>*.gz</code>, like <code>y2log-1.gz</code> )</li>
-          <li>XZ compressed file (<code>*.xz</code>, like <code>y2log-1.xz</code>,
-            currently not created by YaST, you have to compress the file manually)</li>
-          <li>Tarball (<code>*.tar.gz</code> or <code>*.tar.xz</code>,
-            created by the <code><a href=
-            "https://github.com/yast/yast-yast2/blob/master/scripts/save_y2logs">
-            save_y2logs</a></code> script, currently only the
-            <code>YaST2/y2log</code> file is displayed)</li>
-        </ul>
-      </p>
-      <h4>Local Processing</h4>
-      <p>
-        The selected file is NOT uploaded anywhere, the ylogviewer uses
-        the HTML5 features and several JavaScript libraries for handling the
-        GZ, XZ and TAR files, it processes the selected file completely locally!
-        That has several advantages:
-        <ul>
-          <li>Speed - nothing is uploaded or downloaded, no bandwidth limitations</li>
-          <li>Security - the logs might potentially contain sensitive data, all data stay in your machine!</li>
-          <li>Offline mode - the viewer can be used without internet connection</li>
-        </ul>
-      </p>
-    </div>
+      <section class="content">
+        <div class="flex one two-1000">
+          <div>
+            <h4>Experimental Project</h4>
+            <p>
+              <span class="notes-icon">&#9888;&#65039; </span>
+              This is still a proof of concept project for experiments. That just means
+              there might be bugs...
+            </p>
+            <h4>Supported Files</h4>
+            <p>You can load the log file in several formats:
+            <ul>
+              <li>Plain text format (from <code>/var/log/YaST2/y2log</code> )</li>
+              <li>Gzip compressed file (<code>*.gz</code>, like <code>y2log-1.gz</code> )</li>
+              <li>XZ compressed file (<code>*.xz</code>, like <code>y2log-1.xz</code>,
+                currently not created by YaST, you have to compress the file manually)</li>
+              <li>Tarball (<code>*.tar.gz</code> or <code>*.tar.xz</code>,
+                created by the <code><a href=
+                  "https://github.com/yast/yast-yast2/blob/master/scripts/save_y2logs">
+                  save_y2logs</a></code> script, currently only the
+                <code>YaST2/y2log</code> file is displayed)
+              </li>
+            </ul>
+            </p>
+            <h4>Local Processing</h4>
+            <p>
+              The selected file is NOT uploaded anywhere, the ylogviewer uses
+              the HTML5 features and several JavaScript libraries for handling the
+              GZ, XZ and TAR files, it processes the selected file completely locally!
+              That has several advantages:
+            <ul>
+              <li>Speed - nothing is uploaded or downloaded, no bandwidth limitations</li>
+              <li>Security - the logs might potentially contain sensitive data, all data stay in your machine!</li>
+              <li>Offline mode - the viewer can be used without internet connection</li>
+            </ul>
+            </p>
+          </div>
+        </div>
+        </section>
+    </article>
 
     <div id="loader" class="loader"></div>
 
@@ -164,6 +169,11 @@
       </article>
     </div>
 
+    <span id="configuration">
+      <button id="filter">Filter</button>
+    </span>
+
+    <span id="navigation"></span>
   </div>
 </body>
 

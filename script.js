@@ -306,16 +306,18 @@ function parse_y2log(name, y2log) {
   document.getElementById("processes-header").textContent = "Loaded Logs";
 
   console.timeEnd("Parsing " + name);
-  hide_loader();
+  loading_finished();
 }
 
-function show_loader() {
+function loading_start() {
   document.getElementById("loader").style.display = "block";
+  document.getElementById("notes-info").style.display = "none";
 }
 
-function hide_loader() {
+function loading_finished() {
   document.getElementById("loader").style.display = "none";
-  document.getElementById("notes-info").style.display = "none";
+  document.getElementById("filter").style.display = "inline";
+  document.getElementById("navigation").style.display = "inline";
 }
 
 
@@ -330,7 +332,7 @@ function load_file(e) {
   ["content", "file-header", "filter-group-components-list", "index",
     "processes-header"].forEach(id => document.getElementById(id).textContent = "");
 
-  show_loader();
+  loading_start();
 
   // HTML5 FileReader
   var reader = new FileReader();
