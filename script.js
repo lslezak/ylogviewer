@@ -90,7 +90,9 @@ function append_line(parent, message) {
   var message_node = document.createElement("div");
   message_node.textContent = message;
   message_node.classList.add("log-message");
-  parent.lastChild.appendChild(message_node);
+
+  var target_node = (parent.lastChild != null) ? parent.lastChild : parent;
+  target_node.appendChild(message_node);
 }
 
 function start_group(node, timestamp, label, id) {
@@ -166,7 +168,7 @@ function format_elapsed_time(start_time, end_time) {
 }
 
 function parse_y2log(name, y2log) {
-  console.time("Parsing " + name);
+  console.time("Parsing ", name);
 
   var component_groups = new Set();
   var pids = new Map();
@@ -302,7 +304,7 @@ function parse_y2log(name, y2log) {
 
   create_pid_index(pids);
   add_component_filters(component_groups);
-  document.getElementById("file-header").textContent = "Content of file \"" + name + "\"";
+  document.getElementById("file-header").textContent = "Content of " + name;
   document.getElementById("processes-header").textContent = "Loaded Logs";
 
   console.timeEnd("Parsing " + name);
@@ -321,86 +323,98 @@ function loading_finished() {
 }
 
 
+// clean the previous content
+function reset_content() {
+  ["content", "file-header", "filter-group-components-list", "index",
+    "processes-header"].forEach(id => document.getElementById(id).textContent = "");
+}
+
+function load_content(file_name, content) {
+  console.log("Loading ", file_name, content);
+  if (file_name.match(/\.xz$/i)) {
+    var stream = new ReadableStream({
+      start: (controller) => {
+        controller.enqueue(new Uint8Array(content));
+        controller.close();
+      }
+    });
+
+    const decompressedResponse = new Response(
+      new xzwasm.XzReadableStream(stream)
+    );
+
+    console.time("Uncompressing " + file_name);
+    decompressedResponse.arrayBuffer().then(done => {
+      console.timeEnd("Uncompressing " + file_name);
+      var array_buffer = new Uint8Array(done).buffer;
+      // tarball
+      if (file_name.match(/\.tar\.xz$/i)) {
+        console.time("Untarring " + file_name);
+        untar(array_buffer).then((files) => {
+          console.timeEnd("Untarring " + file_name);
+          var y2log = files.find(f => f.name == "YaST2/y2log");
+          if (y2log) {
+            var decoder = new TextDecoder("utf-8");
+            var log = decoder.decode(y2log.buffer);
+            parse_y2log(file_name + ":/YaST2/y2log", log);
+          }
+        });
+      }
+      // just a plain .xz file
+      else {
+        var decoder = new TextDecoder("utf-8");
+        var log = decoder.decode(array_buffer);
+        parse_y2log(file_name, log);
+      }
+    });
+  }
+  else if (file_name.match(/\.tar\.gz$/i) || file_name.match(/\.tgz$/i)) {
+    console.time("Uncompressing " + file_name);
+    var f = pako.ungzip(content);
+    console.timeEnd("Uncompressing " + file_name);
+
+    console.time("Untarring " + file_name);
+    untar(new Uint8Array(f).buffer).then((files) => {
+      console.timeEnd("Untarring " + file_name);
+      var y2log = files.find(f => f.name == "YaST2/y2log");
+      if (y2log) {
+        var decoder = new TextDecoder("utf-8");
+        var log = decoder.decode(y2log.buffer);
+        parse_y2log(file_name + ":/YaST2/y2log", log);
+      }
+    });
+  }
+  else if (file_name.match(/\.gz$/)) {
+    console.time("Uncompressing");
+    content = pako.ungzip(content, { to: "string" });
+    console.timeEnd("Uncompressing");
+    parse_y2log(file_name, content);
+  }
+  else {
+    parse_y2log(file_name, content);
+  }
+
+}
+
+var file;
+function store_file(e) {
+  file = e.target.files[0];
+}
+
 // load a local file selected by user
-function load_file(e) {
-  var file = e.target.files[0];
+function load_file() {
   if (!file) {
     return;
   }
 
-  // clean the previous content
-  ["content", "file-header", "filter-group-components-list", "index",
-    "processes-header"].forEach(id => document.getElementById(id).textContent = "");
-
+  reset_content();
   loading_start();
 
   // HTML5 FileReader
   var reader = new FileReader();
   reader.onload = function (ev) {
     var content = ev.target.result;
-
-    if (file.name.match(/\.xz$/i)) {
-      var stream = new ReadableStream({
-        start: (controller) => {
-          controller.enqueue(new Uint8Array(content));
-          controller.close();
-        }
-      });
-
-      const decompressedResponse = new Response(
-        new xzwasm.XzReadableStream(stream)
-      );
-
-      console.time("Uncompressing " + file.name);
-      decompressedResponse.arrayBuffer().then(done => {
-        console.timeEnd("Uncompressing " + file.name);
-        var array_buffer = new Uint8Array(done).buffer;
-        // tarball
-        if (file.name.match(/\.tar\.xz$/i)) {
-          console.time("Untarring " + file.name);
-          untar(array_buffer).then((files) => {
-            console.timeEnd("Untarring " + file.name);
-            var y2log = files.find(f => f.name == "YaST2/y2log");
-            if (y2log) {
-              var decoder = new TextDecoder("utf-8");
-              var log = decoder.decode(y2log.buffer);
-              parse_y2log(file.name + ":/YaST2/y2log", log);
-            }
-          });
-        }
-        // just a plain .xz file
-        else {
-          var decoder = new TextDecoder("utf-8");
-          var log = decoder.decode(array_buffer);
-          parse_y2log(file.name, log);
-        }
-      });
-    }
-    else if (file.name.match(/\.tar\.gz$/i) || file.name.match(/\.tgz$/i)) {
-      console.time("Uncompressing " + file.name);
-      var f = pako.ungzip(content);
-      console.timeEnd("Uncompressing " + file.name);
-
-      console.time("Untarring " + file.name);
-      untar(new Uint8Array(f).buffer).then((files) => {
-        console.timeEnd("Untarring " + file.name);
-        var y2log = files.find(f => f.name == "YaST2/y2log");
-        if (y2log) {
-          var decoder = new TextDecoder("utf-8");
-          var log = decoder.decode(y2log.buffer);
-          parse_y2log(file.name + ":/YaST2/y2log", log);
-        }
-      });
-    }
-    else if (file.name.match(/\.gz$/)) {
-      console.time("Uncompressing");
-      content = pako.ungzip(content, { to: "string" });
-      console.timeEnd("Uncompressing");
-      parse_y2log(file.name, content);
-    }
-    else {
-      parse_y2log(file.name, content);
-    }
+    load_content(file.name, content);
   };
 
   if (file.name.match(/\.gz$/i) || file.name.match(/\.tgz$/i) || file.name.match(/\.xz$/i)) {
@@ -409,6 +423,37 @@ function load_file(e) {
   else {
     reader.readAsText(file);
   }
+}
+
+function load_url() {
+  var url = document.getElementById("url").value;
+
+  if (!url || url.length == 0) {
+    return;
+  }
+
+  reset_content();
+  loading_start();
+
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Download failed");
+      }
+      // console.log(response.headers.get("content-type"));
+      if (url.match(/\.gz$/i) || url.match(/\.tgz$/i) || url.match(/\.xz$/i)) {
+        return response.arrayBuffer();
+      }
+      else {
+        return response.text();
+      }
+    })
+    .then(buffer => load_content(url, buffer))
+    .catch(error => {
+      loading_finished();
+      document.getElementById("content").textContent = error;
+      console.error(error);
+    });
 }
 
 // show/hide the selected log level messages
@@ -458,12 +503,15 @@ function add_component_filters(component_groups) {
 }
 
 window.onload = function () {
-  document.getElementById("file").addEventListener("change", load_file, false);
+  document.getElementById("file").addEventListener("change", store_file, false);
 
   // display filtering popup
   document.getElementById("filter").onclick = function () {
     document.getElementById("configuration_popup").checked = true;
   };
+
+  document.getElementById("load-url").onclick = load_url;
+  document.getElementById("load-file").onclick = load_file;
 
   // handle log level filters
   document.querySelectorAll("#filter-group-level input[type=checkbox]").forEach(checkbox => {

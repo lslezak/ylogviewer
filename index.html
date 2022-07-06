@@ -26,11 +26,19 @@
       </header>
 
       <section class="content">
+        <h4>Local File</h4>
         <input type="file" id="file" />
+        <button id="load-file">Load File</button>
+      </section>
+
+      <section class="content">
+        <h4>Remote File</h4>
+        <label><input id="url" type="url" placeholder="URL"></label>
+        <button id="load-url">Load URL</button>
       </section>
     </article>
 
-    <article class="card" id="notes-info">
+    <article class="card notes" id="notes-info">
       <header>
         <h3><span class="notes-icon">&#8505;&#65039; </span>Notes</h3>
       </header>
@@ -58,6 +66,20 @@
                 <code>YaST2/y2log</code> file is displayed)
               </li>
             </ul>
+            </p>
+            <h4>Remote Files</h4>
+            <p>
+              Downloading remote files works only from the servers which allow
+              <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">
+                cross-origin resource sharing (CORS)</a>, this is a limitation
+                of the <a href="https://en.wikipedia.org/wiki/Same-origin_policy">
+                same-origin security policy</a>. Not all servers support cross-origin
+                requests, you might get errors for URLs which normally work
+                in the browser. In that case download the file and then use the
+                downloaded file.
+            </p>
+            <p>
+              Only the HTTP and HTTPS protocols are supported for downloading.
             </p>
             <h4>Local Processing</h4>
             <p>

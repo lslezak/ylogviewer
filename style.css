@@ -27,6 +27,7 @@
 
 #file {
   border: none;
+  padding: 0;
 }
 
 #index {
@@ -154,8 +155,8 @@ body {
   margin-bottom: 2em;
 }
 
-.notes p,li {
-  margin: 0;
+.notes {
+  font-size: 70%;
 }
 
 .loader {
