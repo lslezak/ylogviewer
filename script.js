@@ -168,7 +168,7 @@ function format_elapsed_time(start_time, end_time) {
 }
 
 function parse_y2log(name, y2log) {
-  console.time("Parsing ", name);
+  console.time("Parsing");
 
   var component_groups = new Set();
   var pids = new Map();
@@ -307,7 +307,7 @@ function parse_y2log(name, y2log) {
   document.getElementById("file-header").textContent = "Content of " + name;
   document.getElementById("processes-header").textContent = "Loaded Logs";
 
-  console.timeEnd("Parsing " + name);
+  console.timeEnd("Parsing");
   loading_finished();
 }
 
@@ -330,7 +330,7 @@ function reset_content() {
 }
 
 function load_content(file_name, content) {
-  console.log("Loading ", file_name, content);
+  console.log("Loading ", file_name);
   if (file_name.match(/\.xz$/i)) {
     var stream = new ReadableStream({
       start: (controller) => {
@@ -415,6 +415,12 @@ function load_file() {
   reader.onload = function (ev) {
     var content = ev.target.result;
     load_content(file.name, content);
+
+    // update the current page URL without reloading the page
+    var location_url = new URL(location);
+    var search_params = location_url.searchParams;
+    search_params.delete("log_url", url);
+    window.history.pushState("", "", location_url);
   };
 
   if (file.name.match(/\.gz$/i) || file.name.match(/\.tgz$/i) || file.name.match(/\.xz$/i)) {
@@ -448,7 +454,15 @@ function load_url() {
         return response.text();
       }
     })
-    .then(buffer => load_content(url, buffer))
+    .then(buffer => {
+      load_content(url, buffer);
+
+      // update the current page URL without reloading the page
+      var location_url = new URL(location);
+      var search_params = location_url.searchParams;
+      search_params.set("log_url", url);
+      window.history.pushState("", "", location_url);
+    })
     .catch(error => {
       loading_finished();
       document.getElementById("content").textContent = error;
@@ -543,4 +557,14 @@ window.onload = function () {
   content.onmouseleave = (event) => {
     document.getElementById("navigation").style.display = "none";
   };
+
+
+  // directly load the remote URL passed via the "log_url" query parameter
+  const params = new URLSearchParams(location.search);
+  var log_url = params.get("log_url");
+
+  if (log_url && log_url.length > 0) {
+    document.getElementById("url").value = log_url;
+    load_url();
+  }
 };
