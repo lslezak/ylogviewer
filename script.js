@@ -551,7 +551,7 @@ window.onload = function () {
 
     var node = document.getElementById("navigation");
     node.textContent = location;
-    node.style.display = (location.length == 0) ? "none" : "";
+    node.style.display = (location.length == 0) ? "none" : "inline";
   };
   // hide the location when leaving the log area
   content.onmouseleave = (event) => {
