@@ -373,6 +373,30 @@ function load_content(file_name, content) {
       }
     });
   }
+  else if (file_name.match(/\.bz2$/i)) {
+    console.time("Uncompressing " + file_name);
+    var decompressed = bz2.decompress(new Uint8Array(content));
+    console.timeEnd("Uncompressing " + file_name);
+
+    if (file_name.match(/\.tar\.bz2$/i)) {
+      console.time("Untarring " + file_name);
+      untar(decompressed.buffer).then((files) => {
+        console.timeEnd("Untarring " + file_name);
+        var y2log = files.find(f => f.name == "YaST2/y2log");
+        if (y2log) {
+          var decoder = new TextDecoder("utf-8");
+          var log = decoder.decode(y2log.buffer);
+          parse_y2log(file_name + ":/YaST2/y2log", log);
+        }
+      });
+    }
+    // just a plain .bz2 file
+    else {
+      var decoder = new TextDecoder("utf-8");
+      var log = decoder.decode(decompressed);
+      parse_y2log(file_name, log);
+    }
+  }
   else if (file_name.match(/\.tar\.gz$/i) || file_name.match(/\.tgz$/i)) {
     console.time("Uncompressing " + file_name);
     var f = pako.ungzip(content);
@@ -428,7 +452,9 @@ function load_file() {
     window.history.pushState("", "", location_url);
   };
 
-  if (file.name.match(/\.gz$/i) || file.name.match(/\.tgz$/i) || file.name.match(/\.xz$/i)) {
+  if (file.name.match(/\.gz$/i) || file.name.match(/\.tgz$/i)
+    || file.name.match(/\.xz$/i) || file.name.match(/\.bz2$/i)) {
+
     reader.readAsArrayBuffer(file);
   }
   else {
@@ -452,7 +478,8 @@ function load_url() {
         throw new Error("Download failed");
       }
       // console.log(response.headers.get("content-type"));
-      if (url.match(/\.gz$/i) || url.match(/\.tgz$/i) || url.match(/\.xz$/i)) {
+      if (url.match(/\.gz$/i) || url.match(/\.tgz$/i)
+        || url.match(/\.xz$/i) || file.name.match(/\.bz2$/i)) {
         return response.arrayBuffer();
       }
       else {

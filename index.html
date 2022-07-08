@@ -13,6 +13,8 @@
   <script src="pako_inflate.min.js"></script>
   <script src="xzwasm.min.js"></script>
   <script src="untar.js"></script>
+  <script src="bz2.js"></script>
+
   <script src="script.js"></script>
 </head>
 
@@ -57,9 +59,11 @@
             <ul>
               <li>Plain text format (from <code>/var/log/YaST2/y2log</code> )</li>
               <li>Gzip compressed file (<code>*.gz</code>, like <code>y2log-1.gz</code> )</li>
-              <li>XZ compressed file (<code>*.xz</code>, like <code>y2log-1.xz</code>,
-                currently not created by YaST, you have to compress the file manually)</li>
-              <li>Tarball (<code>*.tar.gz</code> or <code>*.tar.xz</code>,
+              <li>XZ compressed file (<code>*.xz</code>, currently not
+                created by YaST, you have to compress the file manually)</li>
+              <li>Bzip2 compressed file (<code>*.bz2</code>, currently not
+                created by YaST, you have to compress the file manually)</li>
+              <li>Tarball (<code>*.tar.gz</code>, <code>*.tar.bz2</code> or <code>*.tar.xz</code>,
                 created by the <code><a href=
                   "https://github.com/yast/yast-yast2/blob/master/scripts/save_y2logs">
                   save_y2logs</a></code> script, currently only the
@@ -72,11 +76,11 @@
               Downloading remote files works only from the servers which allow
               <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">
                 cross-origin resource sharing (CORS)</a>, this is a limitation
-                of the <a href="https://en.wikipedia.org/wiki/Same-origin_policy">
+              of the <a href="https://en.wikipedia.org/wiki/Same-origin_policy">
                 same-origin security policy</a>. Not all servers support cross-origin
-                requests, you might get errors for URLs which normally work
-                in the browser. In that case download the file and then use the
-                downloaded file.
+              requests, you might get errors for URLs which normally work
+              in the browser. In that case download the file and then use the
+              downloaded file.
             </p>
             <p>
               Only the HTTP and HTTPS protocols are supported for downloading.
@@ -95,7 +99,7 @@
             </p>
           </div>
         </div>
-        </section>
+      </section>
     </article>
 
     <div id="loader" class="loader"></div>
