@@ -176,11 +176,12 @@ function parse_y2log(name, y2log) {
   // unique group id
   var group_id = 0;
   var parent_node = document.getElementById("content");
+  const log_regexp = /^(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d) <(\d)> (\w+)\((\d+)\) \[(\S+)\] (.*)/;
 
   var line_index = 0;
   y2log.split("\n").forEach(line => {
     line_index = line_index + 1;
-    var res = line.match(/^(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d) <(\d)> (\w+)\((\d+)\) \[(\S+)\] (.*)/);
+    var res = line.match(log_regexp);
 
     if (res) {
       var entry = {
@@ -211,8 +212,12 @@ function parse_y2log(name, y2log) {
         last_pid = entry.pid;
       }
 
-      // some messages do not contain the file location
-      res = entry.message.match(/^([^ ]*:\d+) (.*)/)
+      // some messages do not contain the file location,
+      // Ruby locations might contains spaces, parse it specifically
+      res = entry.message.match(/^([^ ]*:\d+) (.*)/) ||
+        entry.message.match(/^(.*\(block in .*\):\d+) (.*)/) ||
+        entry.message.match(/^(.*\(block \(\d+ levels\) in .*\):\d+) (.*)/) ||
+        entry.message.match(/^(.*\(ensure in .*\):\d+) (.*)/)
       if (res) {
         entry.location = res[1];
         entry.message = res[2];
