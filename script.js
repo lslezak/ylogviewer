@@ -559,12 +559,8 @@ window.onload = function () {
   };
 
 
-  // directly load the remote URL passed via the "log_url" query parameter
+  // pre-fill the remote URL passed via the "log_url" query parameter
   const params = new URLSearchParams(location.search);
   var log_url = params.get("log_url");
-
-  if (log_url && log_url.length > 0) {
-    document.getElementById("url").value = log_url;
-    load_url();
-  }
+  document.getElementById("url").value = log_url;
 };
