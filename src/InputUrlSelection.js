@@ -9,5 +9,5 @@ export default function InputUrlSelection() {
     setValue(value);
   };
 
-  return <TextInput value={value} onChange={onChange} isRequired type="url" aria-label="Remote file URL"/>;
+  return <TextInput value={value} onChange={onChange} isRequired type="url" placeholder="HTTP URL"/>;
 };
