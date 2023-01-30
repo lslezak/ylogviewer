@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardBody, Text, TextContent, TextVariants } from "@patternfly/react-core";
 
-import Notes from "./Notes";
+import NotesCard from "./NotesCard";
+import InputSelectionCard from "./InputSelectionCard";
 
 import "./App.css";
 
@@ -27,7 +28,9 @@ export default function App() {
         </Card>
       </header>
       <main>
-        <Notes />
+        <InputSelectionCard/>
+        <br />
+        <NotesCard />
       </main>
     </>
   );

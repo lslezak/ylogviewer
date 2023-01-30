@@ -5,7 +5,7 @@ import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
 import InfoAltIcon from '@patternfly/react-icons/dist/esm/icons/info-alt-icon';
 import WarningTriangleIcon from '@patternfly/react-icons/dist/esm/icons/warning-triangle-icon';
 
-export default function Notes() {
+export default function NotesCard() {
   // the notes are visible
   const [isOpen, setIsOpen] = useState(true);
 
@@ -16,7 +16,7 @@ export default function Notes() {
   if (!isOpen) return null;
 
   return (
-    <Card isFlat isRounded className="smaller_font">
+    <Card isFlat isRounded>
       <CardHeader>
         <CardTitle component="h2">
           <InfoAltIcon/>
@@ -104,4 +104,4 @@ export default function Notes() {
       </CardBody>
     </Card>
   );
-}
+};
