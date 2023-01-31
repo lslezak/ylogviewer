@@ -43,7 +43,7 @@ export default function InputUrlSelection() {
         }
 
         <br/>
-        <Button variant="primary">Load URL</Button>
+        <Button isDisabled={!valid || value === ""} variant="primary">Load URL</Button>
       </FormGroup>
     </>
   );

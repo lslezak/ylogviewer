@@ -25,7 +25,7 @@ export default function InputFileSelection() {
           browseButtonText="Select File"
         />
         <br/>
-        <Button variant="primary">Load File</Button>
+        <Button variant="primary" isDisabled={filename === ""}>Load File</Button>
       </FormGroup>
     </>
     );
