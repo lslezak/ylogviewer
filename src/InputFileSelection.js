@@ -16,6 +16,22 @@ export default function InputFileSelection() {
 
   const load = () => {
     setIsLoading(true);
+
+    // HTML5 FileReader
+    const reader = new FileReader();
+
+    reader.onload = (ev) => {
+      const content = ev.target.result;
+      console.log("Loaded: ", content.length, content);
+      setIsLoading(false);
+    };
+
+    if (filename.match(/\.(t?gz|xz|bz2|tar)$/i)) {
+      reader.readAsArrayBuffer(value);
+    }
+    else {
+      reader.readAsText(value);
+    }
   };
 
   return (
