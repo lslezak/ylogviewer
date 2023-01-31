@@ -8,12 +8,13 @@ import PageHeader from "./PageHeader";
 import "./App.css";
 
 export default function App() {
-  // the notes are visible
-  const [isOpen, setIsOpen] = useState(true);
+  const [logData, setLogData] = useState(null);
+  const [fileName, setFileName] = useState(null);
 
-  const close = () => {
-    setIsOpen(false);
-    if (onCloseCallback) onCloseCallback();
+  const dataCallback = (data, name) => {
+    setLogData(data);
+    setFileName(name);
+    console.log("Loaded data from", name);
   };
 
   return (
@@ -22,9 +23,11 @@ export default function App() {
         <PageHeader/>
       </header>
       <main>
-        <InputSelectionCard/>
+        <InputSelectionCard dataCallback={dataCallback}/>
         <br />
-        <NotesCard />
+        { !fileName &&
+          <NotesCard />
+        }
       </main>
     </>
   );

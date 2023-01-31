@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button, FileUpload, FormGroup } from '@patternfly/react-core';
 
-export default function InputFileSelection() {
+export default function InputFileSelection({dataCallback}) {
   const [value, setValue] = useState('');
   const [filename, setFilename] = useState('');
   const [loading, setIsLoading] = useState(false);
@@ -27,10 +27,10 @@ export default function InputFileSelection() {
     };
 
     if (filename.match(/\.(t?gz|xz|bz2|tar)$/i)) {
-      reader.readAsArrayBuffer(value);
+      dataCallback(reader.readAsArrayBuffer(value), filename);
     }
     else {
-      reader.readAsText(value);
+      dataCallback(reader.readAsText(value), filename);
     }
   };
 

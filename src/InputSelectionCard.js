@@ -5,7 +5,7 @@ import { Button, Card, CardTitle, CardBody, CardActions, CardHeader, TextContent
 import InputFileSelection from "./InputFileSelection";
 import InputUrlSelection from "./InputUrlSelection";
 
-export default function InputSelectionCard() {
+export default function InputSelectionCard({dataCallback}) {
   return (
     <Card isFlat isRounded>
       <CardHeader>
@@ -14,10 +14,10 @@ export default function InputSelectionCard() {
         </CardTitle>
       </CardHeader>
       <CardBody>
-        <InputFileSelection/>
+        <InputFileSelection dataCallback={dataCallback}/>
         <br/>
         <br/>
-        <InputUrlSelection/>
+        <InputUrlSelection dataCallback={dataCallback}/>
       </CardBody>
     </Card>
   );

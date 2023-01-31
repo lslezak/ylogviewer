@@ -11,7 +11,7 @@ const isValid = (url) => {
   }
 }
 
-export default function InputUrlSelection() {
+export default function InputUrlSelection({dataCallback}) {
   const [value, setValue] = useState('');
   const [valid, setIsValid] = useState(true);
   const [loading, setIsLoading] = useState(false);
@@ -47,6 +47,7 @@ export default function InputUrlSelection() {
         }
       })
       .then(buffer => {
+        dataCallback(buffer, value);
         console.log("Downloaded ", buffer.byteLength);
       })
       .catch(error => {
