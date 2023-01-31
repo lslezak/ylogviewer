@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import NotesCard from "./NotesCard";
 import InputSelectionCard from "./InputSelectionCard";
 import PageHeader from "./PageHeader";
+import ArchiveViewer from "./ArchiveViewer";
 
 import "./App.css";
 
@@ -25,7 +26,9 @@ export default function App() {
       <main>
         <InputSelectionCard dataCallback={dataCallback}/>
         <br />
-        { !fileName &&
+        { fileName ?
+          <ArchiveViewer data={logData} name={fileName}/>
+          :
           <NotesCard />
         }
       </main>
