@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Bullseye, Spinner } from "@patternfly/react-core";
+import { Bullseye, Spinner, Text } from "@patternfly/react-core";
 
 import { XzReadableStream } from 'xzwasm';
 
@@ -11,7 +11,7 @@ export default function ArchiveViewer({data, name}) {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    console.log("useEffect processing:", processing);
+    console.log("useEffect processing:", processing, fileName, logData);
 
     if (processing) return;
 
@@ -39,7 +39,18 @@ export default function ArchiveViewer({data, name}) {
         setProcessing(false);
       });
     }
-  }, [fileName, logData]);
+    // just a plain file, convert to string
+    else {
+      console.log("logData", typeof logData);
+
+      if (typeof logData !== "string")
+      {
+        const decoder = new TextDecoder("utf-8");
+        setLogData(decoder.decode(logData));
+      }
+    }
+
+  }, [fileName, logData, processing]);
 
   return (
     <>
@@ -48,6 +59,16 @@ export default function ArchiveViewer({data, name}) {
           <Spinner size="xl"/>
         </Bullseye>
       }
+      { !processing && (typeof logData === "string") && (
+        <>
+          <Text>
+            {originalFileName}
+          </Text>
+          <Text>
+            {logData}
+          </Text>
+        </>
+      )}
     </>
   );
 };
