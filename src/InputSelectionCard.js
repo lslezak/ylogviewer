@@ -14,10 +14,9 @@ export default function InputSelectionCard() {
         </CardTitle>
       </CardHeader>
       <CardBody>
-        <Text component={TextVariants.h3}>Local file</Text>
         <InputFileSelection/>
         <br/>
-        <Text component={TextVariants.h3}>Remote file</Text>
+        <br/>
         <InputUrlSelection/>
       </CardBody>
     </Card>
