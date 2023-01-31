@@ -5,6 +5,7 @@ import { Button, FileUpload, FormGroup } from '@patternfly/react-core';
 export default function InputFileSelection() {
   const [value, setValue] = useState('');
   const [filename, setFilename] = useState('');
+  const [loading, setIsLoading] = useState(false);
 
   const handleChange = (value, filename, _event) => {
     console.log(value);
@@ -13,10 +14,15 @@ export default function InputFileSelection() {
     setFilename(filename);
   };
 
+  const load = () => {
+    setIsLoading(true);
+  };
+
   return (
     <>
       <FormGroup role="group" label="Local file">
         <FileUpload
+          isDisabled={loading}
           value={value}
           filename={filename}
           filenamePlaceholder="Drag and drop a log file or select one"
@@ -25,7 +31,7 @@ export default function InputFileSelection() {
           browseButtonText="Select File"
         />
         <br/>
-        <Button variant="primary" isDisabled={filename === ""}>Load File</Button>
+        <Button variant="primary" onClick={load} isLoading={loading} isDisabled={filename === "" || loading}>Load File</Button>
       </FormGroup>
     </>
     );

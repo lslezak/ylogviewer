@@ -14,6 +14,7 @@ const isValid = (url) => {
 export default function InputUrlSelection() {
   const [value, setValue] = useState('');
   const [valid, setIsValid] = useState(true);
+  const [loading, setIsLoading] = useState(false);
 
   const onChange = (value) => {
     setIsValid(isValid(value));
@@ -23,6 +24,10 @@ export default function InputUrlSelection() {
   const onClearButtonClick = () => {
     // change to empty value
     onChange("");
+  };
+
+  const load = () => {
+    setIsLoading(true);
   };
 
   const displayError = (!valid && value !== "");
@@ -35,13 +40,15 @@ export default function InputUrlSelection() {
           <TextInput
               value={value}
               onChange={onChange}
+              isDisabled={loading}
               type="url"
               placeholder="HTTP URL"
+              aria-label="URL of a remote log file"
               validated={validated}
           />
           <Button
             variant={ButtonVariant.control}
-            isDisabled={value === ""}
+            isDisabled={value === "" || loading}
             onClick={onClearButtonClick}
           >
             Clear
@@ -58,7 +65,7 @@ export default function InputUrlSelection() {
           {/* append non breaking space to keep constant height of the error placeholder */}
           <Text component="span">{"\u00A0"}</Text>
         </InputGroup>
-        <Button isDisabled={!valid || value === ""} variant="primary">Load URL</Button>
+        <Button onClick={load} isLoading={loading} isDisabled={!valid || value === "" || loading} variant="primary" icon="" >Load URL</Button>
       </FormGroup>
     </>
   );
