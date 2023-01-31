@@ -47,14 +47,17 @@ export default function InputUrlSelection() {
             Clear
           </Button>
         </InputGroup>
-        { displayError ?
-          <HelperText>
-            <HelperTextItem variant="error" hasIcon>
-              Invalid URL
-            </HelperTextItem>
-          </HelperText>
-          : <br/>
-        }
+        <InputGroup>
+          { displayError &&
+            <HelperText>
+              <HelperTextItem variant="error" hasIcon>
+                Invalid URL
+              </HelperTextItem>
+            </HelperText>
+          }
+          {/* append non breaking space to keep constant height of the error placeholder */}
+          <Text component="span">{"\u00A0"}</Text>
+        </InputGroup>
         <Button isDisabled={!valid || value === ""} variant="primary">Load URL</Button>
       </FormGroup>
     </>
