@@ -15,10 +15,12 @@ export default function InputUrlSelection() {
   const [value, setValue] = useState('');
   const [valid, setIsValid] = useState(true);
   const [loading, setIsLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const onChange = (value) => {
     setIsValid(isValid(value));
     setValue(value);
+    setFailed(false);
   };
 
   const onClearButtonClick = () => {
@@ -28,6 +30,30 @@ export default function InputUrlSelection() {
 
   const load = () => {
     setIsLoading(true);
+    setFailed(false);
+
+    window.fetch(value)
+      .then(response => {
+        if (!response.ok) {
+          console.error(response);
+          throw new Error("Download failed");
+        }
+
+        if (value.match(/\.(t?gz|xz|bz2|tar)$/i)) {
+          return response.arrayBuffer();
+        }
+        else {
+          return response.text();
+        }
+      })
+      .then(buffer => {
+        console.log("Downloaded ", buffer.byteLength);
+      })
+      .catch(error => {
+        console.error(error);
+        setFailed(true);
+      })
+      .finally(() => {setIsLoading(false)});
   };
 
   const displayError = (!valid && value !== "");
@@ -59,6 +85,13 @@ export default function InputUrlSelection() {
             <HelperText>
               <HelperTextItem variant="error" hasIcon>
                 Invalid URL
+              </HelperTextItem>
+            </HelperText>
+          }
+          { failed &&
+            <HelperText>
+              <HelperTextItem variant="error" hasIcon>
+                Download failed
               </HelperTextItem>
             </HelperText>
           }

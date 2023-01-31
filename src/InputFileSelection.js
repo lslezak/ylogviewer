@@ -22,7 +22,7 @@ export default function InputFileSelection() {
 
     reader.onload = (ev) => {
       const content = ev.target.result;
-      console.log("Loaded: ", content.length, content);
+      console.log("Loaded: ", content.length);
       setIsLoading(false);
     };
 
