@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Button, FormGroup, Text, TextInput, HelperText, HelperTextItem, ValidatedOptions } from '@patternfly/react-core';
+import { Button, ButtonVariant, FormGroup, InputGroup, Text, TextInput, HelperText, HelperTextItem, ValidatedOptions } from '@patternfly/react-core';
 
 const isValid = (url) => {
   try {
@@ -20,19 +20,33 @@ export default function InputUrlSelection() {
     setValue(value);
   };
 
+  const onClearButtonClick = () => {
+    // change to empty value
+    onChange("");
+  };
+
   const displayError = (!valid && value !== "");
   const validated = value === "" ? null : (valid ? ValidatedOptions.success :  ValidatedOptions.error)
 
   return (
     <>
       <FormGroup role="group" label="Remote file">
-        <TextInput
-            value={value}
-            onChange={onChange}
-            type="url"
-            placeholder="HTTP URL"
-            validated={validated}
-        />
+        <InputGroup>
+          <TextInput
+              value={value}
+              onChange={onChange}
+              type="url"
+              placeholder="HTTP URL"
+              validated={validated}
+          />
+          <Button
+            variant={ButtonVariant.control}
+            isDisabled={value === ""}
+            onClick={onClearButtonClick}
+          >
+            Clear
+          </Button>
+        </InputGroup>
         { displayError ?
           <HelperText>
             <HelperTextItem variant="error" hasIcon>
@@ -41,8 +55,6 @@ export default function InputUrlSelection() {
           </HelperText>
           : <br/>
         }
-
-        <br/>
         <Button isDisabled={!valid || value === ""} variant="primary">Load URL</Button>
       </FormGroup>
     </>
