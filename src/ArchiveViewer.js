@@ -3,72 +3,82 @@ import React, { useState, useEffect } from "react";
 import { Bullseye, Spinner, Text } from "@patternfly/react-core";
 
 import { XzReadableStream } from 'xzwasm';
+import tarball from "tarballjs";
+
+const initialState = {
+  name: null,
+  originalName: null,
+  data: null,
+  y2log: null,
+  processing: false
+};
 
 export default function ArchiveViewer({data, name}) {
-  const [logData, setLogData] = useState(data);
-  const [originalFileName, setOriginalFileName] = useState(name);
-  const [fileName, setFileName] = useState(name);
-  const [processing, setProcessing] = useState(false);
+  const [state, setState] = useState({...initialState, originalName: name, name, data});
 
-  useEffect(() => {
-    console.log("useEffect processing:", processing, fileName, logData);
+  if (state.y2log) {
+    return (
+      <>
+        <Text component="h2">
+          {state.originalName}
+        </Text>
+        <br/>
+        <Text component="pre">
+          {state.y2log}
+        </Text>
+      </>
+  )}
 
-    if (processing) return;
+  if (state.processing) {
+    return (
+      <Bullseye>
+        <Spinner size="xl"/>
+      </Bullseye>
+    )
+  }
 
-    // xz archive
-    if (fileName.match(/\.xz$/i)) {
-      console.time("Uncompressing " + fileName);
-      setProcessing(true);
-      const stream = new ReadableStream({
-        start: (controller) => {
-          controller.enqueue(new Uint8Array(logData));
-          controller.close();
-        }
-      });
+  console.log("process data");
 
-      const decompressedResponse = new Response(
-        new XzReadableStream(stream)
-      );
+  // xz archive
+  if (state.name.match(/\.xz$/i)) {
+    console.time("Uncompressing " + state.name);
+    setState({...state, processing: true});
+    const stream = new ReadableStream({
+      start: (controller) => {
+        controller.enqueue(new Uint8Array(state.data));
+        controller.close();
+      }
+    });
 
-      decompressedResponse.arrayBuffer().then(done => {
-        console.timeEnd("Uncompressing " + fileName);
-        const newData = new Uint8Array(done).buffer;
-        console.log("Uncompressed size", newData.byteLength);
-        setLogData(newData);
-        setFileName(fileName.replace(/\.xz$/i, ""));
-        setProcessing(false);
-      });
+    const decompressedResponse = new Response(
+      new XzReadableStream(stream)
+    );
+
+    decompressedResponse.arrayBuffer().then(done => {
+      console.timeEnd("Uncompressing " + state.name);
+      const newData = new Uint8Array(done).buffer;
+      console.log("Uncompressed size", newData.byteLength);
+      setState({...state, processing: false, data: newData, name: state.name.replace(/\.xz$/i, "")});
+    });
+  }
+  else if (state.name.match(/\.tar$/i)) {
+    const tarReader = new tarball.TarReader();
+    tarReader.readArrayBuffer(state.data);
+
+    const y2log = tarReader.getTextFile("YaST2/y2log");
+    setState({...state, data: null, name: state.name.replace(/\.tar$/i, ""), y2log });
+  }
+  // just a plain file, convert to string
+  else {
+    if (typeof state.data === "string") {
+      setState({...state, data: null, y2log: state.data});
     }
-    // just a plain file, convert to string
     else {
-      console.log("logData", typeof logData);
-
-      if (typeof logData !== "string")
-      {
-        const decoder = new TextDecoder("utf-8");
-        setLogData(decoder.decode(logData));
-      }
+      const decoder = new TextDecoder("utf-8");
+      const y2log = decoder.decode(state.data);
+      setState({...state, data: null, y2log });
     }
+  }
 
-  }, [fileName, logData, processing]);
-
-  return (
-    <>
-      { processing &&
-        <Bullseye>
-          <Spinner size="xl"/>
-        </Bullseye>
-      }
-      { !processing && (typeof logData === "string") && (
-        <>
-          <Text>
-            {originalFileName}
-          </Text>
-          <Text>
-            {logData}
-          </Text>
-        </>
-      )}
-    </>
-  );
+  return <></>;
 };
