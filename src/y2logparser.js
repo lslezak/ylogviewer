@@ -35,7 +35,7 @@ export default function y2logparser(y2log) {
     }
     else if (ret.length > 0) {
       let last_item = ret[ret.length - 1];
-      last_item.message = (last_item.message || "") + line;
+      last_item.message = last_item.message ? last_item.message + "\n" + line : line;
       ret[ret.length - 1] = last_item;
     }
   });
