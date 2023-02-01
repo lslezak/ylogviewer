@@ -1,0 +1,63 @@
+
+@use "sass:color";
+
+$base-color: #151515;
+
+$unimportant-color: color.scale($base-color, $lightness: +40%);
+$loglevel-0-color: color.scale($unimportant-color, $lightness: +20%);
+$loglevel-2-color: #fdd3a2;
+$loglevel-3-color: #ffb8b8;
+$loglevel-4-color: #bdc1ff;
+$loglevel-5-color: #ffadf8;
+
+.logline {
+  word-break: break-all;
+  white-space: pre-wrap;
+  font-family: RedHatMono, 'Courier New', Courier, monospace;
+  font-size: 80%;
+  color: $unimportant-color;
+}
+
+.important {
+  color: $base-color;
+}
+
+.loglevel-0, .loglevel-0 .important{
+  color: $loglevel-0-color;
+  &:hover{
+    background-color: color.scale($loglevel-0-color, $lightness: +80%);
+  }
+}
+
+.loglevel-1:hover {
+  background-color: #eeeeee;
+}
+
+.loglevel-2 {
+  background-color: $loglevel-2-color;
+  &:hover{
+    background-color: color.scale($loglevel-2-color, $lightness: -10%);
+  }
+}
+
+.loglevel-3 {
+  background-color: $loglevel-3-color;
+  &:hover{
+    background-color: color.scale($loglevel-3-color, $lightness: -10%);
+  }
+}
+
+.loglevel-4 {
+  background-color: $loglevel-4-color;
+  &:hover{
+    background-color: color.scale($loglevel-4-color, $lightness: -10%);
+  }
+}
+
+.loglevel-5 {
+  background-color: $loglevel-5-color;
+  &:hover{
+    background-color: color.scale($loglevel-5-color, $lightness: -10%);
+  }
+}
+

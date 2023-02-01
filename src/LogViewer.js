@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Card, CardBody, CardHeader, CardTitle, Text, TextContent, TextVariants } from "@patternfly/react-core";
 import y2logparser from "./y2logparser";
 
-import "./LogViewer.css";
+import "./LogViewer.scss";
 
 const defaultVisibility = {
   date: false,
@@ -30,7 +30,7 @@ export default function LogViewer({name, data}) {
         { visibility.pid && <span>{"("}{item.pid}{") "}</span> }
         { visibility.component && <span>{"["}{item.component}{"] "}</span> }
         { visibility.location && <span>{item.location}{" "}</span> }
-        { visibility.message && <span>{item.message}{" "}</span> }
+        { visibility.message && <span className="important">{item.message}{" "}</span> }
       </div>
     );
   });
