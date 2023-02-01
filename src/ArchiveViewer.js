@@ -37,7 +37,7 @@ export default function ArchiveViewer({data, name}) {
     )
   }
 
-  console.log("process data");
+  console.log("process data", state);
 
   // xz archive
   if (state.name.match(/\.xz$/i)) {
@@ -56,14 +56,14 @@ export default function ArchiveViewer({data, name}) {
 
     decompressedResponse.arrayBuffer().then(done => {
       console.timeEnd("Uncompressing " + state.name);
-      const newData = new Uint8Array(done).buffer;
+      const newData = new Uint8Array(done);
       console.log("Uncompressed size", newData.byteLength);
       setState({...state, processing: false, data: newData, name: state.name.replace(/\.xz$/i, "")});
     });
   }
   else if (state.name.match(/\.tar$/i)) {
     const tarReader = new tarball.TarReader();
-    tarReader.readArrayBuffer(state.data);
+    tarReader.readArrayBuffer(state.data.buffer);
 
     const y2log = tarReader.getTextFile("YaST2/y2log");
     setState({...state, data: null, name: state.name.replace(/\.tar$/i, ""), y2log });
