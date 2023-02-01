@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Bullseye, Spinner, Text } from "@patternfly/react-core";
 
+import LogViewer from "./LogViewer";
+
 import { XzReadableStream } from 'xzwasm';
 import tarball from "tarballjs";
 
@@ -18,15 +20,7 @@ export default function ArchiveViewer({data, name}) {
 
   if (state.y2log) {
     return (
-      <>
-        <Text component="h2">
-          {state.originalName}
-        </Text>
-        <br/>
-        <Text component="pre">
-          {state.y2log}
-        </Text>
-      </>
+      <LogViewer data={state.y2log} name={state.originalName}/>
   )}
 
   if (state.processing) {

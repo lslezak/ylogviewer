@@ -1,0 +1,41 @@
+
+.logline {
+  word-break: break-all;
+  white-space: pre-wrap;
+  font-family: RedHatMono, 'Courier New', Courier, monospace;
+  font-size: 80%;
+}
+
+.loglevel-0 {
+  opacity: 0.5;
+}
+.loglevel-0:hover {
+  background-color: #eeeeee;
+}
+.loglevel-1:hover {
+  background-color: #eeeeee;
+}
+.loglevel-2 {
+  background-color: #fdd3a2;
+}
+.loglevel-2:hover {
+  background-color: #fcc789;
+}
+.loglevel-3 {
+  background-color: #ffb8b8;
+}
+.loglevel-3:hover {
+  background-color: #ff9f9f;
+}
+.loglevel-4 {
+  background-color: #bdc1ff;
+}
+.loglevel-4:hover {
+  background-color: #a4a9ff;
+}
+.loglevel-5 {
+  background-color: #ffadf8;
+}
+.loglevel-5:hover {
+  background-color: #ff94f6;
+}
