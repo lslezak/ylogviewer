@@ -24,13 +24,14 @@ export default function InputFileSelection({dataCallback}) {
       const content = ev.target.result;
       console.log("Loaded: ", content.length);
       setIsLoading(false);
+      dataCallback(content, filename);
     };
 
     if (filename.match(/\.(t?gz|xz|bz2|tar)$/i)) {
-      dataCallback(reader.readAsArrayBuffer(value), filename);
+      reader.readAsArrayBuffer(value);
     }
     else {
-      dataCallback(reader.readAsText(value), filename);
+      reader.readAsText(value);
     }
   };
 

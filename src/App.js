@@ -8,15 +8,20 @@ import ArchiveViewer from "./ArchiveViewer";
 
 import "./App.css";
 
+const initialState = {
+  name: null,
+  data: null,
+};
+
 export default function App() {
-  const [logData, setLogData] = useState(null);
-  const [fileName, setFileName] = useState(null);
+  const [state, setState] = useState(initialState);
 
   const dataCallback = (data, name) => {
-    setLogData(data);
-    setFileName(name);
     console.log("Loaded data from", name);
+    setState({...state, data, name })
   };
+
+  console.log("rendering ", state);
 
   return (
     <>
@@ -26,8 +31,8 @@ export default function App() {
       <main>
         <InputSelectionCard dataCallback={dataCallback}/>
         <br />
-        { fileName ?
-          <ArchiveViewer data={logData} name={fileName}/>
+        { state.name ?
+          <ArchiveViewer data={state.data} name={state.name}/>
           :
           <NotesCard />
         }

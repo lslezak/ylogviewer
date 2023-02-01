@@ -37,8 +37,6 @@ export default function ArchiveViewer({data, name}) {
     )
   }
 
-  console.log("process data", state);
-
   // xz archive
   if (state.name.match(/\.xz$/i)) {
     console.time("Uncompressing " + state.name);

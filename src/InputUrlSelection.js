@@ -47,8 +47,8 @@ export default function InputUrlSelection({dataCallback}) {
         }
       })
       .then(buffer => {
-        dataCallback(buffer, value);
         console.log("Downloaded ", buffer.byteLength);
+        dataCallback(buffer, value);
       })
       .catch(error => {
         console.error(error);
