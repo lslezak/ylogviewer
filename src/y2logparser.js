@@ -1,5 +1,5 @@
 
-// convert component name to component group to group similar
+// helper function - convert component name to component group to group similar
 // e.g. for "ui-macro" and "qt-ui" use the same "UI" filtering component
 function component_group(name) {
   if (name == "zconfig" || name == "parser::yum" || name == "Progress++"
@@ -78,8 +78,6 @@ export default function y2logparser(y2log) {
 
   console.time("Parsing y2log");
   console.log("Loaded " + lines.length + " lines");
-
-  console.log(components);
 
   return { lines, components };
 };

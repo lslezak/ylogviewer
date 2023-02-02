@@ -13,8 +13,8 @@ const isValid = (url) => {
 
 export default function InputUrlSelection({dataCallback}) {
   // const [value, setValue] = useState("https://gist.githubusercontent.com/lslezak/d36a2a15b9ccd49f035c7e51b4818ee5/raw/a8f2822f608f7ae0bbabb3dbe457b5202e21da25/y2log-tw-installation.tar.xz");
-  // const [value, setValue] = useState("https://gist.githubusercontent.com/lslezak/d36a2a15b9ccd49f035c7e51b4818ee5/raw/a8f2822f608f7ae0bbabb3dbe457b5202e21da25/y2log.xz");
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState("https://gist.githubusercontent.com/lslezak/d36a2a15b9ccd49f035c7e51b4818ee5/raw/a8f2822f608f7ae0bbabb3dbe457b5202e21da25/y2log.xz");
+  // const [value, setValue] = useState("");
   const [valid, setIsValid] = useState(true);
   const [loading, setIsLoading] = useState(false);
   const [failed, setFailed] = useState(false);
