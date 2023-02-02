@@ -1,12 +1,14 @@
 
 import React, { useState } from "react";
-import { Card, CardBody, CardHeader, CardTitle, FormGroup, InputGroup, Text, TextContent, TextVariants } from "@patternfly/react-core";
+import { Card, CardBody, CardHeader, CardTitle, FormGroup, TextContent } from "@patternfly/react-core";
 import y2logparser from "./y2logparser";
 import LogLevelFilter from "./LogLevelFilter";
+import PropertyFilter from "./PropertyFilter";
 
 import "./LogViewer.scss";
 
-const defaultVisibility = {
+// default displayed log properties
+const defaultProperties = {
   date: false,
   time: true,
   level: false,
@@ -22,27 +24,31 @@ const defaultLogLevels = [true, true, true, true, true, true];
 
 export default function LogViewer({name, data}) {
   const [items, setItems] = useState(() => {return y2logparser(data)});
-  const [visibility, setVisibility] = useState(defaultVisibility);
+  const [properties, setProperties] = useState(defaultProperties);
   const [logLevels, setLogLevels] = useState(defaultLogLevels);
 
   const lines = [];
 
-  const onChangeCallback = (filter) => {
+  const onLevelChangeCallback = (filter) => {
     setLogLevels(filter);
+  };
+
+  const onAttributeChangeCallback = (props) => {
+    setProperties(props);
   };
 
   items.forEach((item, index) => {
     if (logLevels[item.level]) {
       lines.push (
         <div className={`logline loglevel-${item.level}`} key={`log-line-${index}`}>
-          { visibility.date && <span>{item.date}{" "}</span> }
-          { visibility.time && <span>{item.time}{" "}</span> }
-          { visibility.level && <span>{"<"}{item.level}{"> "}</span> }
-          { visibility.host && <span>{item.host}{" "}</span> }
-          { visibility.pid && <span>{"("}{item.pid}{") "}</span> }
-          { visibility.component && <span>{"["}{item.component}{"] "}</span> }
-          { visibility.location && <span>{item.location}{" "}</span> }
-          { visibility.message && <span className="important">{item.message}{" "}</span> }
+          { properties.date && <span>{item.date}{" "}</span> }
+          { properties.time && <span>{item.time}{" "}</span> }
+          { properties.level && <span>{"<"}{item.level}{"> "}</span> }
+          { properties.host && <span>{item.host}{" "}</span> }
+          { properties.pid && <span>{"("}{item.pid}{") "}</span> }
+          { properties.component && <span>{"["}{item.component}{"] "}</span> }
+          { properties.location && <span>{item.location}{" "}</span> }
+          { properties.message && <span className="important">{item.message}{" "}</span> }
         </div>
     )}
   });
@@ -56,9 +62,9 @@ export default function LogViewer({name, data}) {
       </CardHeader>
       <CardBody>
         <FormGroup role="group" label="Filters">
-          <InputGroup>
-            <LogLevelFilter input={defaultLogLevels} onChangeCallback={onChangeCallback}/>
-          </InputGroup>
+          <LogLevelFilter input={logLevels} onChangeCallback={onLevelChangeCallback}/>
+          { " " }
+          <PropertyFilter input={properties} onChangeCallback={onAttributeChangeCallback}/>
         </FormGroup>
         <br/>
         <TextContent>
