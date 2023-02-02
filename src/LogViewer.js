@@ -1,7 +1,8 @@
 
 import React, { useState } from "react";
-import { Card, CardBody, CardHeader, CardTitle, Text, TextContent, TextVariants } from "@patternfly/react-core";
+import { Card, CardBody, CardHeader, CardTitle, FormGroup, InputGroup, Text, TextContent, TextVariants } from "@patternfly/react-core";
 import y2logparser from "./y2logparser";
+import LogLevelFilter from "./LogLevelFilter";
 
 import "./LogViewer.scss";
 
@@ -16,7 +17,8 @@ const defaultVisibility = {
   message: true
 }
 
-const defaultLogLevels = [true, true, true, true, true];
+// which log levels should be  displaed by default, list of levels 0...5
+const defaultLogLevels = [true, true, true, true, true, true];
 
 export default function LogViewer({name, data}) {
   const [items, setItems] = useState(() => {return y2logparser(data)});
@@ -24,6 +26,10 @@ export default function LogViewer({name, data}) {
   const [logLevels, setLogLevels] = useState(defaultLogLevels);
 
   const lines = [];
+
+  const onChangeCallback = (filter) => {
+    setLogLevels(filter);
+  };
 
   items.forEach((item, index) => {
     if (logLevels[item.level]) {
@@ -42,13 +48,19 @@ export default function LogViewer({name, data}) {
   });
 
   return (
-    <Card isPlain>
+    <Card isFlat isRounded>
       <CardHeader>
         <CardTitle component="h2">
           {name}
         </CardTitle>
       </CardHeader>
       <CardBody>
+        <FormGroup role="group" label="Filters">
+          <InputGroup>
+            <LogLevelFilter input={defaultLogLevels} onChangeCallback={onChangeCallback}/>
+          </InputGroup>
+        </FormGroup>
+        <br/>
         <TextContent>
           {lines}
         </TextContent>
