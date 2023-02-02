@@ -6,6 +6,16 @@ import LogViewer from "./LogViewer";
 
 import { XzReadableStream } from 'xzwasm';
 import tarball from "tarballjs";
+import { decompress } from "bz2";
+
+const bz2Decompress = (data) => {
+  // hmmmmm, the bz2 library has strange exports depending on the environment...  :-/
+  if (typeof window !== 'undefined') {
+    return window.bz2.decompress(new Uint8Array(data));
+  } else {
+    return decompress(new Uint8Array(data)) ;
+  }
+}
 
 const initialState = {
   name: null,
@@ -17,6 +27,8 @@ const initialState = {
 
 export default function ArchiveViewer({data, name}) {
   const [state, setState] = useState({...initialState, originalName: name, name, data});
+
+  // console.log("render ", state);
 
   if (state.y2log) {
     return (
@@ -52,6 +64,12 @@ export default function ArchiveViewer({data, name}) {
       console.log("Uncompressed size", newData.byteLength);
       setState({...state, processing: false, data: newData, name: state.name.replace(/\.xz$/i, "")});
     });
+  }
+  else if (state.name.match(/\.bz2$/i)) {
+    console.time("Uncompressing " + state.name);
+    let decompressed = bz2Decompress(state.data);
+    console.timeEnd("Uncompressing " + state.name);
+    setState({...state, data: decompressed, name: state.name.replace(/\.bz2$/i, "") });
   }
   else if (state.name.match(/\.tar$/i)) {
     const tarReader = new tarball.TarReader();
