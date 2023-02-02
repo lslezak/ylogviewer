@@ -7,6 +7,7 @@ import LogViewer from "./LogViewer";
 import { XzReadableStream } from 'xzwasm';
 import tarball from "tarballjs";
 import { decompress } from "bz2";
+import { ungzip } from "pako";
 
 const bz2Decompress = (data) => {
   // hmmmmm, the bz2 library has strange exports depending on the environment...  :-/
@@ -70,6 +71,12 @@ export default function ArchiveViewer({data, name}) {
     let decompressed = bz2Decompress(state.data);
     console.timeEnd("Uncompressing " + state.name);
     setState({...state, data: decompressed, name: state.name.replace(/\.bz2$/i, "") });
+  }
+  else if (state.name.match(/\.gz$/i)) {
+    console.time("Uncompressing " + state.name);
+    let decompressed = ungzip(new Uint8Array(state.data));
+    console.timeEnd("Uncompressing " + state.name);
+    setState({...state, data: decompressed, name: state.name.replace(/\.gz$/i, "") });
   }
   else if (state.name.match(/\.tar$/i)) {
     const tarReader = new tarball.TarReader();
