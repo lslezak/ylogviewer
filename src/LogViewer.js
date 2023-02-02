@@ -4,6 +4,7 @@ import { Card, CardBody, CardHeader, CardTitle, FormGroup, TextContent } from "@
 import y2logparser from "./y2logparser";
 import LogLevelFilter from "./LogLevelFilter";
 import PropertyFilter from "./PropertyFilter";
+import ComponentFilter from "./ComponentFilter";
 
 import "./LogViewer.scss";
 
@@ -19,15 +20,22 @@ const defaultProperties = {
   message: true
 }
 
-// which log levels should be  displaed by default, list of levels 0...5
+// convert component set to visibility mapping
+const defaultComponents = (components) => {
+  let ret = {};
+  components.forEach((component) => {ret[component] = true});
+  return ret;
+}
+
+// which log levels should be displayed by default, list of levels 0...5
 const defaultLogLevels = [true, true, true, true, true, true];
 
 export default function LogViewer({name, data}) {
   const [items, setItems] = useState(() => {return y2logparser(data)});
-  const [properties, setProperties] = useState(defaultProperties);
-  const [logLevels, setLogLevels] = useState(defaultLogLevels);
 
-  const lines = [];
+  const [logLevels, setLogLevels] = useState(defaultLogLevels);
+  const [properties, setProperties] = useState(defaultProperties);
+  const [components, setComponents] = useState(defaultComponents(items.components));
 
   const onLevelChangeCallback = (filter) => {
     setLogLevels(filter);
@@ -37,8 +45,13 @@ export default function LogViewer({name, data}) {
     setProperties(props);
   };
 
-  items.forEach((item, index) => {
-    if (logLevels[item.level]) {
+  const onComponentChangeCallback = (comps) => {
+    setComponents(comps);
+  };
+
+  const lines = [];
+  items.lines.forEach((item, index) => {
+    if (logLevels[item.level] && components[item.group]) {
       lines.push (
         <div className={`logline loglevel-${item.level}`} key={`log-line-${index}`}>
           { properties.date && <span>{item.date}{" "}</span> }
@@ -65,6 +78,8 @@ export default function LogViewer({name, data}) {
           <LogLevelFilter input={logLevels} onChangeCallback={onLevelChangeCallback}/>
           { " " }
           <PropertyFilter input={properties} onChangeCallback={onAttributeChangeCallback}/>
+          { " " }
+          <ComponentFilter input={components} onChangeCallback={onComponentChangeCallback}/>
         </FormGroup>
         <br/>
         <TextContent>
