@@ -3,7 +3,7 @@
 export default function y2logparser(y2log) {
   console.time("Parsing y2log");
   let ret = [];
-  const log_regexp = /^(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d) <(\d)> (\w+)\((\d+)\) \[(\S+)\] (.*)/;
+  const log_regexp = /^(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d) <(\d)> ([^\(]+)\((\d+)\) \[(\S+)\] (.*)/;
 
   y2log.split("\n").forEach((line) => {
     let res = line.match(log_regexp);
