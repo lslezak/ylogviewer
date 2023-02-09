@@ -1,7 +1,8 @@
 # Ylogviewer
 
-
-## :warning: This project is obsolete! See the [newer version](https://github.com/lslezak/ylogviewer2) based on React and PatternFly.
+<p style="background-color: #fdd3a2; padding: 1em; border-radius: 8px">
+:warning: This project is obsolete! See the [newer version](https://github.com/lslezak/ylogviewer2) based on React and PatternFly.
+</p>
 
 
 This is an experimental YaST log (y2log) viewer.
